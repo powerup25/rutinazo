@@ -275,7 +275,9 @@ function diaSugerido() {
 /* ===== Red y cola ===== */
 async function apiInit() {
   const r = await fetch(API_URL + '?action=init&u=' + encodeURIComponent(codigo));
-  return r.json();
+  const t = await r.text();
+  try { return JSON.parse(t); }
+  catch (e) { const err = new Error('no_json'); err.detalle = t.slice(0, 300); throw err; }
 }
 async function apiGuardar(payload) {
   const r = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
@@ -515,9 +517,21 @@ function vConfig() {
     <p class="suave" style="margin-top:10px">Pegá la URL de tu Apps Script en <b>API_URL</b>, al principio del script de index.html.</p>`;
 }
 function vSinRed() {
-  return `<h1>Sin conexión</h1>
-    <p class="suave" style="margin:10px 0 18px">La primera vez la app necesita internet para bajar tu rutina. Después funciona aunque se corte la señal.</p>
-    <button class="btn btn-p" data-a="reintentar">Reintentar</button>`;
+  if (!navigator.onLine) {
+    return `<h1>Sin conexión</h1>
+      <p class="suave" style="margin:10px 0 18px">La primera vez la app necesita internet para bajar tu rutina. Después funciona aunque se corte la señal.</p>
+      <button class="btn btn-p" data-a="reintentar">Reintentar</button>`;
+  }
+  const noJson = vista.error === 'no_json';
+  return `<h1>No se pudo leer la planilla</h1>
+    <p class="suave" style="margin:10px 0 14px">${noJson
+      ? 'El Apps Script respondió, pero no con datos. Casi siempre es el acceso de la implementación: tiene que estar en "Cualquier usuario". También puede ser que el código no se haya guardado antes de implementar.'
+      : 'No hubo respuesta del Apps Script. Revisá que API_URL sea la URL que termina en /exec, completa y sin espacios.'}</p>
+    <p class="chico suave" style="margin-bottom:6px">URL configurada:</p>
+    <p class="chico" style="word-break:break-all;margin-bottom:14px">${esc(API_URL)}</p>
+    ${vista.detalle ? `<p class="chico suave" style="margin-bottom:6px">Respuesta recibida:</p><p class="chico" style="word-break:break-all;margin-bottom:14px">${esc(vista.detalle)}</p>` : ''}
+    <a class="btn btn-s" href="${esc(API_URL)}?action=init&u=${encodeURIComponent(codigo || '')}" target="_blank" rel="noopener" style="text-decoration:none">Abrir la URL en otra pestaña</a>
+    <button class="btn btn-p" style="margin-top:10px" data-a="reintentar">Reintentar</button>`;
 }
 
 function vInicio() {
@@ -880,7 +894,7 @@ async function cargar() {
     const escribiendo = document.activeElement && document.activeElement.tagName === 'INPUT';
     if (!escribiendo && !$('#capa').innerHTML) render();
   } catch (e) {
-    if (!D) { vista = { p: 'sinred' }; render(); }
+    if (!D) { vista = { p: 'sinred', error: e.message, detalle: e.detalle || '' }; render(); }
     else aviso('Sin señal: estás viendo lo último guardado');
   }
   enviarCola();
