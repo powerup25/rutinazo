@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#E7ECEA" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#16232B" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F1F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1C1828" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Rutinazo">
@@ -12,14 +12,14 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --fondo:#E7ECEA; --superficie:#F8FAF9; --hundido:#DCE3E0;
-  --tinta:#1B2A33; --suave:#56666E; --linea:#C6D0CC;
-  --accion:#2250C2; --sobre-accion:#FFFFFF;
-  --hecho:#2B8553; --descanso:#E3A214; --alerta:#BF3A2F;
-  --radio-g:18px; --radio-c:10px;
+  --fondo:#F3F1F8; --superficie:#FFFFFF; --hundido:#ECE8F5;
+  --tinta:#2A2440; --suave:#6D6785; --linea:#DDD8EA;
+  --accion:#6246EA; --sobre-accion:#FFFFFF;
+  --hecho:#16876A; --hecho-suave:#E2F4EE; --descanso:#F59A3C; --descanso-suave:#FFF1E2; --alerta:#D9434B;
+  --radio-g:24px; --radio-c:16px;
   color-scheme:light dark;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -27,31 +27,31 @@
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --fondo:#16232B; --superficie:#1E2E38; --hundido:#142028;
-    --tinta:#E8EFEE; --suave:#9CADB4; --linea:#30434F;
-    --accion:#6A8FF2; --sobre-accion:#0E1A33;
-    --hecho:#4FBF84; --descanso:#F0BA3A; --alerta:#E86C61;
+    --fondo:#1C1828; --superficie:#27223A; --hundido:#1F1B2E;
+    --tinta:#EEEAF7; --suave:#A7A0C2; --linea:#3A3452;
+    --accion:#A28FFF; --sobre-accion:#1C1530;
+    --hecho:#4FD1A5; --hecho-suave:#1F3A35; --descanso:#FFB46B; --descanso-suave:#3A2C24; --alerta:#FF7A80;
   }
 }
 :root[data-theme="dark"]{
-  --fondo:#16232B; --superficie:#1E2E38; --hundido:#142028;
-  --tinta:#E8EFEE; --suave:#9CADB4; --linea:#30434F;
-  --accion:#6A8FF2; --sobre-accion:#0E1A33;
-  --hecho:#4FBF84; --descanso:#F0BA3A; --alerta:#E86C61;
+  --fondo:#1C1828; --superficie:#27223A; --hundido:#1F1B2E;
+  --tinta:#EEEAF7; --suave:#A7A0C2; --linea:#3A3452;
+  --accion:#A28FFF; --sobre-accion:#1C1530;
+  --hecho:#4FD1A5; --hecho-suave:#1F3A35; --descanso:#FFB46B; --descanso-suave:#3A2C24; --alerta:#FF7A80;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0}
 body{
   background:var(--fondo); color:var(--tinta);
-  font:400 17px/1.45 "Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font:400 16px/1.5 "Rubik",system-ui,-apple-system,"Segoe UI",sans-serif;
   -webkit-tap-highlight-color:transparent;
 }
 main{max-width:560px;margin:0 auto;padding:18px 18px 56px}
-h1,h2,h3,.cond{font-family:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif;font-weight:600;letter-spacing:.005em}
-h1{font-size:2rem;line-height:1.05;margin:0}
-h2{font-size:1.45rem;line-height:1.1;margin:28px 0 10px}
-h3{font-size:1.3rem;line-height:1.1;margin:0}
+h1,h2,h3,.cond{font-family:"Rubik",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:600;letter-spacing:-.01em}
+h1{font-size:1.85rem;line-height:1.1;margin:0}
+h2{font-size:1.25rem;line-height:1.2;margin:28px 0 10px}
+h3{font-size:1.1rem;line-height:1.25;margin:0;font-weight:500}
 p{margin:0}
 .suave{color:var(--suave)}
 .chico{font-size:.9rem}
@@ -75,11 +75,11 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .saludo{margin-top:6px}
 .heroe{margin:20px 0 6px}
 .heroe .que{font-size:1.05rem;color:var(--suave)}
-.heroe .dia{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(5rem,26vw,8.5rem);line-height:.86;letter-spacing:-.02em;margin:2px 0 0}
+.heroe .dia{font-family:"Rubik",system-ui,sans-serif;font-weight:700;font-size:clamp(4rem,19vw,6.5rem);line-height:.95;letter-spacing:-.03em;margin:2px 0 0;color:var(--accion)}
 .dias{display:flex;gap:8px;margin:16px 0 18px}
 .dias button{flex:1;min-height:46px;border-radius:999px;border:1.5px solid var(--linea);background:var(--superficie);font-weight:600}
 .dias button[aria-pressed="true"]{background:var(--tinta);color:var(--fondo);border-color:var(--tinta)}
-.aviso-rutina{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--radio-c);background:var(--superficie);border-left:5px solid var(--descanso);margin:18px 0 0}
+.aviso-rutina{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--radio-c);background:var(--descanso-suave);border-left:5px solid var(--descanso);margin:18px 0 0}
 .aviso-rutina.n3{border-left-color:var(--alerta)}
 .aviso-rutina.n1{border-left-color:var(--hecho)}
 .pendiente{padding:16px;border-radius:var(--radio-g);background:var(--superficie);border:1.5px solid var(--accion);margin:14px 0}
@@ -89,7 +89,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .lista{list-style:none;margin:0;padding:0;background:var(--superficie);border-radius:var(--radio-c)}
 .lista li{display:flex;justify-content:space-between;gap:12px;padding:11px 14px;border-top:1px solid var(--linea)}
 .lista li:first-child{border-top:0}
-.lista .obj{color:var(--suave);white-space:nowrap;font-variant-numeric:tabular-nums}
+.lista .obj{color:var(--suave);text-align:right;font-variant-numeric:tabular-nums}
 .pie{margin-top:28px;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .sync{font-size:.9rem;color:var(--suave);display:flex;align-items:center;gap:6px}
 .sync::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--hecho)}
@@ -97,15 +97,15 @@ button{cursor:pointer;border:0;background:none;padding:0}
 
 /* Entrenamiento */
 .progreso{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 0 16px}
-.progreso .cond{font-size:1.9rem;line-height:1}
+.progreso .cond{font-size:1.5rem;line-height:1.1}
 .discos{display:flex;gap:7px;align-items:center}
-.disco{width:30px;height:30px;border-radius:50%;border:3px solid var(--linea);position:relative;background:transparent}
-.disco::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--fondo)}
+.disco{width:26px;height:26px;border-radius:50%;border:3px solid var(--linea);position:relative;background:transparent}
+.disco::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--fondo)}
 .disco.lleno{background:var(--hecho);border-color:var(--hecho)}
-.disco.ahora{border-color:var(--tinta)}
+.disco.ahora{border-color:var(--accion)}
 .vuelta-txt{font-size:.95rem;color:var(--suave);text-align:right;margin-top:4px}
-.ej{background:var(--superficie);border-radius:var(--radio-g);padding:16px;margin-bottom:12px;border:1.5px solid transparent}
-.ej.ok{border-color:var(--hecho)}
+.ej{background:var(--superficie);border-radius:var(--radio-g);padding:18px;margin-bottom:12px;border:2px solid transparent}
+.ej.ok{border-color:var(--hecho);background:var(--hecho-suave)}
 .ej.salt{border-color:var(--linea);opacity:.8}
 .ej-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .mas{min-width:44px;min-height:44px;margin:-10px -8px 0 0;border-radius:50%;font-size:1.4rem;line-height:1;color:var(--suave)}
@@ -116,12 +116,14 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .paso{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;background:var(--hundido);border-radius:var(--radio-c);min-height:64px}
 .paso button{height:64px;font-size:1.6rem;font-weight:500;color:var(--tinta);border-radius:var(--radio-c)}
 .paso label{display:flex;flex-direction:column;align-items:center}
-.paso input{width:100%;text-align:center;border:0;background:transparent;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:1.9rem;line-height:1;padding:0;font-variant-numeric:tabular-nums}
+.paso input{width:100%;text-align:center;border:0;background:transparent;font-family:"Rubik",system-ui,sans-serif;font-weight:600;font-size:1.6rem;line-height:1;padding:0;font-variant-numeric:tabular-nums}
 .paso span{font-size:.78rem;color:var(--suave);margin-top:1px}
 .pasos.uno{grid-template-columns:1fr}
 .hecho-btn{background:var(--hecho);color:#fff}
+:root[data-theme="dark"] .hecho-btn{color:#0F2A22}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hecho-btn{color:#0F2A22}}
 .estado{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
-.estado .cond{font-size:1.35rem}
+.estado .cond{font-size:1.15rem}
 .estado.ok .cond{color:var(--hecho)}
 
 /* Capa (hojas y descanso) */
@@ -139,7 +141,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .descanso{position:fixed;inset:0;z-index:11;background:var(--fondo);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 .anillo{position:relative;width:min(72vw,300px);aspect-ratio:1;margin:18px 0 26px}
 .anillo svg{width:100%;height:100%;transform:rotate(-90deg)}
-.anillo .cuenta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(4.5rem,22vw,6.5rem);font-variant-numeric:tabular-nums}
+.anillo .cuenta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Rubik",system-ui,sans-serif;font-weight:600;font-size:clamp(4rem,19vw,5.5rem);font-variant-numeric:tabular-nums}
 .descanso .fila{width:100%;max-width:400px}
 
 /* Esfuerzo */
@@ -147,10 +149,20 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .esf .chips{margin:10px 0 0}
 .esf .chips button{flex:1}
 
+/* Pendientes */
+.recordatorio{background:var(--descanso-suave);border-radius:var(--radio-g);padding:16px;margin:0 0 20px}
+.recordatorio>p{margin:2px 0 6px}
+.pend-item{background:var(--superficie);border-radius:var(--radio-c);padding:14px;margin-top:10px}
+.pend-item .fila{margin-top:10px}
+.pend-item .btn{min-height:46px;font-size:.98rem}
+
 /* Resumen */
+.reg{padding:12px 14px;border-top:1px solid var(--linea)}
+.reg:first-child{border-top:0}
+.reg .hoy{font-weight:500;font-variant-numeric:tabular-nums;margin-top:2px}
 .cifras{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
 .cifra{background:var(--superficie);border-radius:var(--radio-c);padding:12px}
-.cifra .cond{font-size:2.2rem;line-height:1;display:block}
+.cifra .cond{font-size:1.9rem;line-height:1.1;display:block;color:var(--accion)}
 .cifra span:last-child{font-size:.88rem;color:var(--suave)}
 
 /* Historial */
@@ -240,7 +252,10 @@ function bloquesDe(dia) {
 }
 function bloquesSesion() { return bloquesDe(S.dia); }
 function bloqueActual() { return bloquesSesion()[S.bi]; }
-function itemDe(ej) { return bloqueActual().items.find(i => String(i.ejercicio_id) === String(ej)); }
+function itemDe(ej) {
+  for (const b of bloquesSesion()) { const it = b.items.find(i => String(i.ejercicio_id) === String(ej)); if (it) return it; }
+  return null;
+}
 
 /* ===== Historial derivado ===== */
 function sesionesHechas() {
@@ -259,11 +274,19 @@ function ultimaVez(ej, excluir) {
   const filas = regs.filter(r => r.sesion_id === ult.sesion_id).sort((a, b) => Number(a.vuelta) - Number(b.vuelta));
   return { ts: ult.ts, filas };
 }
-function textoUltima(u, item) {
-  const partes = u.filas.map(f => fmtSerie(num(f.peso), num(f.reps), item));
-  const iguales = partes.every(p => p === partes[0]);
-  return iguales ? partes[0] + (partes.length > 1 ? ` (${partes.length} vueltas)` : '') : partes.join(', ');
+// Muestra las vueltas de un ejercicio. Si el peso cambia entre vueltas: "55 → 57,5 → 60 kg × 12"
+function fmtVueltas(filas, item) {
+  const partes = filas.map(f => fmtSerie(num(f.peso), num(f.reps), item));
+  if (!partes.length) return '';
+  if (partes.every(p => p === partes[0])) return partes[0] + (partes.length > 1 ? ` (${partes.length} vueltas)` : '');
+  const pesos = filas.map(f => num(f.peso)), reps = filas.map(f => num(f.reps));
+  if (pesos.every(p => p != null) && reps.every(r => r === reps[0])) {
+    return pesos.map(fmtNum).join(' → ') + ` kg${item.peso_modo === 'c/u' ? ' c/u' : ''}` + (reps[0] != null ? ` × ${fmtReps(reps[0], item)}` : '');
+  }
+  return partes.join(', ');
 }
+function textoUltima(u, item) { return fmtVueltas(u.filas, item); }
+function esProgresiva(u) { return u && new Set(u.filas.map(f => `${num(f.peso)}|${num(f.reps)}`)).size > 1; }
 function diaSugerido() {
   const ds = dias();
   const hechas = sesionesHechas().filter(s => !D.rutina || s.rutina_id === D.rutina.rutina_id);
@@ -330,14 +353,16 @@ function borrador(item) {
   const ej = item.ejercicio_id, k = clave(S.bi, S.vuelta, ej);
   if (S.borr[k]) return S.borr[k];
   let base = null;
+  const u = S.reemplazos[ej] ? null : ultimaVez(ej, S.sesion_id);
+  // 1) lo que hiciste en esta misma vuelta la última vez
+  if (u) { const f = u.filas.find(x => Number(x.vuelta) === S.vuelta); if (f) base = { peso: num(f.peso), reps: num(f.reps) }; }
+  // 2) lo que hiciste en la vuelta anterior de hoy
   for (let pv = S.vuelta - 1; pv >= 1 && !base; pv--) {
     const m = S.marcas[clave(S.bi, pv, ej)];
     if (m && m.estado !== 'salteado') base = { peso: m.peso, reps: m.reps };
   }
-  if (!base && !S.reemplazos[ej]) {
-    const u = ultimaVez(ej, S.sesion_id);
-    if (u) { const f = u.filas.find(x => Number(x.vuelta) === S.vuelta) || u.filas[u.filas.length - 1]; base = { peso: num(f.peso), reps: num(f.reps) }; }
-  }
+  // 3) la última vuelta registrada la vez anterior, o el objetivo de la rutina
+  if (!base && u) { const f = u.filas[u.filas.length - 1]; base = { peso: num(f.peso), reps: num(f.reps) }; }
   if (!base) base = { peso: num(item.peso), reps: num(item.reps) };
   S.borr[k] = Object.assign({}, base);
   return S.borr[k];
@@ -348,10 +373,46 @@ function empezar(dia) {
     sesion_id: 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     rutina_id: D.rutina.rutina_id, dia, inicio: ahora(),
     bi: 0, vuelta: 1, fase: 'entreno',
-    marcas: {}, borr: {}, omitir: {}, reemplazos: {}, esf: {}, enviados: [], descansoHasta: null
+    marcas: {}, borr: {}, omitir: {}, reemplazos: {}, esf: {}, enviados: [], descansoHasta: null,
+    descartados: {}, recup: null
   };
   guardarS(); pedirWakeLock();
   vista = { p: 'entreno' }; render(); window.scrollTo(0, 0);
+}
+
+// Ejercicios salteados hoy que todavía no recuperaste ni descartaste
+function pendientesSesion() {
+  const out = {}, desc = S.descartados || {};
+  Object.keys(S.marcas).forEach(k => {
+    const m = S.marcas[k];
+    if (m.estado !== 'salteado') return;
+    const [b, v, ej] = k.split('|'), kk = b + '|' + ej;
+    if (desc[kk]) return;
+    const o = out[kk] || (out[kk] = { k: kk, bi: Number(b), ej, vueltas: [], motivo: m.motivo });
+    o.vueltas.push(Number(v));
+  });
+  return Object.values(out).map(o => { o.vueltas.sort((a, b) => a - b); return o; });
+}
+function borradorRec(item) {
+  const r = S.recup;
+  if (r.borr) return r.borr;
+  const v = r.vueltas[0];
+  let base = null;
+  const u = ultimaVez(item.ejercicio_id, S.sesion_id);
+  if (u) { const f = u.filas.find(x => Number(x.vuelta) === v) || u.filas[u.filas.length - 1]; base = { peso: num(f.peso), reps: num(f.reps) }; }
+  if (!base) {
+    for (const k of Object.keys(S.marcas)) {
+      const m = S.marcas[k];
+      if (k.endsWith('|' + item.ejercicio_id) && m.estado !== 'salteado') { base = { peso: m.peso, reps: m.reps }; break; }
+    }
+  }
+  if (!base) base = { peso: num(item.peso), reps: num(item.reps) };
+  r.borr = Object.assign({}, base);
+  return r.borr;
+}
+function draft(ej) {
+  const item = itemDe(ej);
+  return (S.recup && String(S.recup.ej) === String(ej)) ? borradorRec(item) : borrador(item);
 }
 
 function autoOmitidos() {
@@ -374,7 +435,7 @@ function revisar() {
     S.descansoTotal = bl.descanso;
   } else {
     const algoHecho = bl.items.some(it => Object.keys(S.marcas).some(k => k.startsWith(S.bi + '|') && k.endsWith('|' + it.ejercicio_id) && S.marcas[k].estado !== 'salteado'));
-    if (algoHecho) S.fase = 'esfuerzo'; else return cerrarBloque();
+    if (algoHecho || pendientesSesion().length) S.fase = 'esfuerzo'; else return cerrarBloque();
   }
 }
 
@@ -435,9 +496,26 @@ function calcularResumen(estado) {
     const antes = Math.max(...u.filas.map(f => num(f.peso) || 0));
     if (antes && maxHoy[ej] > antes) subidas.push({ ej, antes, ahora: maxHoy[ej] });
   });
+  const detalle = [];
+  bloquesSesion().forEach((bl, bi) => bl.items.forEach(it => {
+    const ej = it.ejercicio_id;
+    const filas = Object.keys(S.marcas)
+      .filter(k => k.startsWith(bi + '|') && k.endsWith('|' + ej))
+      .map(k => Object.assign({ vuelta: Number(k.split('|')[1]) }, S.marcas[k]))
+      .sort((a, b) => a.vuelta - b.vuelta);
+    if (!filas.length) return;
+    const hechas = filas.filter(f => f.estado !== 'salteado');
+    const rep = filas.find(f => f.estado === 'reemplazado');
+    const u = ultimaVez(ej, S.sesion_id);
+    detalle.push({
+      nombre: rep ? `${nombreEj(ej)} (hiciste ${rep.reemplazo})` : nombreEj(ej),
+      hoy: hechas.length ? fmtVueltas(hechas, it) + (hechas.length < filas.length ? `, ${filas.length - hechas.length} salteada${filas.length - hechas.length > 1 ? 's' : ''}` : '') : 'Salteado',
+      antes: u ? textoUltima(u, it) : ''
+    });
+  }));
   return {
     estado, minutos: Math.max(1, Math.round((Date.now() - new Date(S.inicio)) / 60000)),
-    hechos: hechos.size, salteados: [...salteados].filter(e => !hechos.has(e)).length, cambios: cambios.size, subidas
+    hechos: hechos.size, salteados: [...salteados].filter(e => !hechos.has(e)).length, cambios: cambios.size, subidas, detalle
   };
 }
 
@@ -568,8 +646,8 @@ function vInicio() {
         <h3>${b.tipo === 'series' ? nombreEj(b.items[0].ejercicio_id) : `Circuito ${i + 1}`}, ${b.vueltas} ${b.tipo === 'series' ? 'series' : 'vueltas'}</h3>
         <ul class="lista">${b.items.map(it => {
           const u = ultimaVez(it.ejercicio_id);
-          const p = u ? num(u.filas[u.filas.length - 1].peso) : num(it.peso);
-          return `<li><span>${esc(nombreEj(it.ejercicio_id))}</span><span class="obj">${esc(fmtSerie(p, num(it.reps), it))}</span></li>`;
+          const txt = u ? textoUltima(u, it) : fmtSerie(num(it.peso), num(it.reps), it);
+          return `<li><span>${esc(nombreEj(it.ejercicio_id))}</span><span class="obj">${esc(txt)}</span></li>`;
         }).join('')}</ul>
       </section>`).join('')}
     ${avisoRut}
@@ -603,8 +681,10 @@ function vEntreno() {
 function vTarjeta(item) {
   const ej = item.ejercicio_id, m = marca(ej), rep = S.reemplazos[ej];
   const u = ultimaVez(ej, S.sesion_id);
+  const fv = u && esProgresiva(u) ? u.filas.find(f => Number(f.vuelta) === S.vuelta) : null;
   const meta = `Objetivo <b>${esc(fmtSerie(num(item.peso), num(item.reps), item))}</b>` +
-    (u && !rep ? `<br>Última vez (${fmtFecha(u.ts)}): <b>${esc(textoUltima(u, item))}</b>` : '');
+    (u && !rep ? `<br>Última vez (${fmtFecha(u.ts)}): <b>${esc(textoUltima(u, item))}</b>` : '') +
+    (fv && !rep ? `<br>En la vuelta ${S.vuelta}: <b>${esc(fmtSerie(num(fv.peso), num(fv.reps), item))}</b>` : '');
   const nombre = esc(nombreEj(ej));
   if (m) {
     const ok = m.estado !== 'salteado';
@@ -640,14 +720,52 @@ function paso(ej, campo, valor, unidad) {
   </div>`;
 }
 
+function vPendientes() {
+  const pend = pendientesSesion();
+  if (!pend.length) return '';
+  const txtVueltas = v => v.length === 1 ? `la vuelta ${v[0]}` : `las vueltas ${v.slice(0, -1).join(', ')} y ${v[v.length - 1]}`;
+  return `<div class="recordatorio">
+    <h3>Te quedó pendiente</h3>
+    <p class="suave chico">Fijate si se liberó la máquina antes de seguir.</p>
+    ${pend.map(p => `<div class="pend-item">
+      <p><b>${esc(nombreEj(p.ej))}</b></p>
+      <p class="suave chico">Salteaste ${txtVueltas(p.vueltas)}${p.motivo ? ` (${esc(p.motivo.toLowerCase())})` : ''}</p>
+      <div class="fila"><button class="btn btn-s" data-a="dejarPend" data-k="${esc(p.k)}">Dejarlo así</button>
+        <button class="btn btn-p" data-a="recuperar" data-k="${esc(p.k)}">Hacerlo ahora</button></div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function vRecuperar() {
+  const r = S.recup, item = itemDe(r.ej), v = r.vueltas[0], b = borradorRec(item);
+  const u = ultimaVez(r.ej, S.sesion_id);
+  const fv = u && u.filas.find(f => Number(f.vuelta) === v);
+  const conPeso = tienePeso(item, b.peso);
+  return `
+    <div class="barra"><button class="btn-t" data-a="cancelarRecup">Volver</button><span class="cond" style="font-size:1.1rem">Día ${S.dia}</span><span></span></div>
+    <p class="suave">Recuperando ${r.vueltas.length > 1 ? `${r.vueltas.length} vueltas` : 'una vuelta'}</p>
+    <article class="ej" style="margin-top:10px">
+      <h3>${esc(nombreEj(r.ej))}</h3>
+      <p class="ej-meta">Vuelta ${v}. Objetivo <b>${esc(fmtSerie(num(item.peso), num(item.reps), item))}</b>
+        ${fv ? `<br>La última vez en esta vuelta: <b>${esc(fmtSerie(num(fv.peso), num(fv.reps), item))}</b>` : ''}</p>
+      <div class="pasos ${conPeso ? '' : 'uno'}">
+        ${conPeso ? paso(r.ej, 'peso', b.peso, item.peso_modo === 'c/u' ? 'kg c/u' : 'kg') : ''}
+        ${paso(r.ej, 'reps', b.reps, unidadReps(item))}
+      </div>
+      <button class="btn hecho-btn" data-a="hechoRecup">Hecho, vuelta ${v}</button>
+    </article>`;
+}
+
 function vEsfuerzo() {
+  if (S.recup) return vRecuperar();
   const bl = bloqueActual(), total = bloquesSesion().length;
   const elegidos = S.esf[S.bi] || {};
   const items = bl.items.filter(it => Object.keys(S.marcas).some(k => k.startsWith(S.bi + '|') && k.endsWith('|' + it.ejercicio_id) && S.marcas[k].estado !== 'salteado'));
   return `
-    <div class="barra"><span></span><span class="cond" style="font-size:1.2rem">Día ${S.dia}</span><span></span></div>
-    <h1>${bl.tipo === 'series' ? 'Ejercicio terminado' : `Circuito ${S.bi + 1} terminado`}</h1>
-    <p class="suave" style="margin:8px 0 18px">¿Cómo te resultó cada ejercicio?</p>
+    <div class="barra"><span></span><span class="cond" style="font-size:1.1rem">Día ${S.dia}</span><span></span></div>
+    <h1 style="margin-bottom:18px">${bl.tipo === 'series' ? 'Ejercicio terminado' : `Circuito ${S.bi + 1} terminado`}</h1>
+    ${vPendientes()}
+    ${items.length ? '<p class="suave" style="margin:0 0 12px">¿Cómo te resultó cada ejercicio?</p>' : ''}
     ${items.map(it => `
       <div class="esf"><h3>${esc(S.reemplazos[it.ejercicio_id] ? S.reemplazos[it.ejercicio_id].nombre : nombreEj(it.ejercicio_id))}</h3>
         <div class="chips">${ESFUERZO.map(e => `<button data-a="esf" data-ej="${esc(it.ejercicio_id)}" data-v="${e.v}" aria-pressed="${elegidos[it.ejercicio_id] === e.v}">${e.t}</button>`).join('')}</div>
@@ -667,6 +785,9 @@ function vResumen() {
     </div>
     ${r.subidas.length ? `<h2>Subiste de peso</h2><ul class="lista">${r.subidas.map(s => `<li><span>${esc(nombreEj(s.ej))}</span><span class="obj">${fmtNum(s.antes)} → ${fmtNum(s.ahora)} kg</span></li>`).join('')}</ul>` : ''}
     ${r.cambios ? `<p class="suave" style="margin-top:14px">Cambiaste ${r.cambios} ${r.cambios === 1 ? 'ejercicio' : 'ejercicios'} por otro.</p>` : ''}
+    ${(r.detalle || []).length ? `<h2>Tu registro de hoy</h2><div class="lista">${r.detalle.map(x => `<div class="reg">
+      <p>${esc(x.nombre)}</p><p class="hoy">${esc(x.hoy)}</p>
+      ${x.antes ? `<p class="suave chico">La vez anterior: ${esc(x.antes)}</p>` : ''}</div>`).join('')}</div>` : ''}
     <div class="pie">${htmlSync()}</div>
     <button class="btn btn-p" style="margin-top:16px" data-a="cerrarResumen">Volver al inicio</button>`;
 }
@@ -738,7 +859,11 @@ function vEjercicio() {
     <p class="suave" style="margin:6px 0 16px">Objetivo: ${esc(fmtSerie(num(item.peso), num(item.reps), item))}</p>
     ${lista.length ? lista.map(rs => {
       const esf = rs.map(r => r.esfuerzo).find(Boolean);
-      const vueltas = rs.map(r => r.estado === 'salteado' ? 'salteado' : fmtSerie(num(r.peso), num(r.reps), item) + (r.estado === 'reemplazado' ? ` (${r.reemplazo})` : '')).join(', ');
+      const porV = {};
+      rs.forEach(r => { const v = Number(r.vuelta); if (!porV[v] || porV[v].estado === 'salteado') porV[v] = r; });
+      rs = Object.keys(porV).map(Number).sort((a, b) => a - b).map(v => porV[v]);
+      const vueltas = rs.every(r => r.estado === 'hecho') ? fmtVueltas(rs, item)
+        : rs.map(r => r.estado === 'salteado' ? 'salteado' : fmtSerie(num(r.peso), num(r.reps), item) + (r.estado === 'reemplazado' ? ` (${r.reemplazo})` : '')).join(', ');
       const motivo = rs.map(r => r.motivo).find(Boolean);
       return `<div class="det"><p><b>${esc(fmtFechaLarga(rs[0].ts))}</b>${esf ? `<span class="suave">, ${esc(etiquetaEsf(esf).toLowerCase())}</span>` : ''}</p>
         <p class="vueltas">${esc(vueltas)}</p>${motivo ? `<p class="suave chico">${esc(motivo)}</p>` : ''}</div>`;
@@ -775,6 +900,7 @@ function pintarConfirmarFin() {
   $('#capa').innerHTML = `<div class="hoja" role="dialog" aria-label="Terminar entrenamiento">
     <h3>¿Terminar el entrenamiento?</h3>
     <p class="suave">Lo que marcaste se guarda. Lo que falta queda como no hecho.</p>
+    ${S && pendientesSesion().length ? `<p style="margin-top:10px">Ojo: tenés ${pendientesSesion().length} ${pendientesSesion().length === 1 ? 'ejercicio salteado' : 'ejercicios salteados'} sin recuperar: ${esc(pendientesSesion().map(p => nombreEj(p.ej)).join(', '))}.</p>` : ''}
     <button class="btn btn-p" data-a="terminarSi">Terminar</button>
     <button class="btn btn-t" data-a="cerrarCapa">Seguir entrenando</button></div>`;
 }
@@ -791,7 +917,7 @@ const A = {
   historial() { vista = { p: 'historial' }; render(); window.scrollTo(0, 0); },
   verEj(d) { vista = { p: 'ejercicio', ej: d.ej }; render(); window.scrollTo(0, 0); },
   paso(d) {
-    const item = itemDe(d.ej), b = borrador(item), c = d.c;
+    const item = itemDe(d.ej), b = draft(d.ej), c = d.c;
     let p;
     if (c === 'peso') p = item.peso_modo === 'c/u' ? 0.5 : 2.5;
     else p = item.unidad === 'seg' ? 5 : 1;
@@ -838,6 +964,31 @@ const A = {
   saltarDescanso() { terminarDescanso(false); },
   esf(d) { S.esf[S.bi] = S.esf[S.bi] || {}; S.esf[S.bi][d.ej] = S.esf[S.bi][d.ej] === d.v ? '' : d.v; guardarS(); render(); },
   guardarBloque() { cerrarBloque(); },
+  recuperar(d) {
+    const p = pendientesSesion().find(x => x.k === d.k);
+    if (!p) return;
+    S.recup = { bi: p.bi, ej: p.ej, vueltas: p.vueltas.slice(), borr: null };
+    guardarS(); render(); window.scrollTo(0, 0);
+  },
+  dejarPend(d) { S.descartados = S.descartados || {}; S.descartados[d.k] = true; guardarS(); render(); },
+  cancelarRecup() { S.recup = null; guardarS(); render(); },
+  hechoRecup() {
+    const r = S.recup, item = itemDe(r.ej), b = borradorRec(item), v = r.vueltas.shift();
+    const k = clave(r.bi, v, r.ej), prev = S.marcas[k];
+    const motivo = 'Recuperado' + (prev && prev.motivo ? ` (${prev.motivo})` : '');
+    S.marcas[k] = { estado: 'hecho', peso: b.peso, reps: b.reps, motivo, ts: ahora(), recuperado: true };
+    delete S.omitir[r.ej];
+    if (S.enviados.includes(r.bi)) {
+      // ese circuito ya se había enviado: se manda la vuelta recuperada como registro nuevo
+      encolar({ sesion: sesionPayload('en_curso'), registros: [{
+        registro_id: `${S.sesion_id}-${r.bi}-${v}-${r.ej}-rec`, sesion_id: S.sesion_id, rutina_id: S.rutina_id,
+        dia: S.dia, bloque: bloquesSesion()[r.bi].bloque, vuelta: v, ejercicio_id: r.ej,
+        peso: b.peso == null ? '' : b.peso, reps: b.reps == null ? '' : b.reps,
+        estado: 'hecho', reemplazo: '', motivo, esfuerzo: '', ts: S.marcas[k].ts }] });
+    }
+    if (!r.vueltas.length) { S.recup = null; aviso('Listo, quedó registrado'); }
+    guardarS(); render(); window.scrollTo(0, 0);
+  },
   terminar() { pintarConfirmarFin(); },
   terminarSi() { finalizar('incompleta', false); },
   cerrarResumen() { S = null; guardarS(); vista = { p: 'inicio' }; render(); window.scrollTo(0, 0); }
@@ -854,7 +1005,7 @@ document.addEventListener('input', e => {
   const t = e.target;
   if (t.dataset && t.dataset.c && t.dataset.ej && S) {
     const item = itemDe(t.dataset.ej);
-    if (item) { borrador(item)[t.dataset.c] = num(t.value); guardarS(); }
+    if (item) { draft(t.dataset.ej)[t.dataset.c] = num(t.value); guardarS(); }
   }
   if (t.id === 'reemplazo' && op) op.nombre = t.value;
 });
