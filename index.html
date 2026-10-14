@@ -14,30 +14,86 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ===== Temas ===== */
 :root{
-  --fondo:#F3F1F8; --superficie:#FFFFFF; --hundido:#ECE8F5;
-  --tinta:#2A2440; --suave:#6D6785; --linea:#DDD8EA;
-  --accion:#6246EA; --sobre-accion:#FFFFFF;
-  --hecho:#16876A; --hecho-suave:#E2F4EE; --descanso:#F59A3C; --descanso-suave:#FFF1E2; --alerta:#D9434B;
   --radio-g:24px; --radio-c:16px;
-  color-scheme:light dark;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
+:root,[data-tema="clasico"]{
+  --fondo:#F3F1F8; --superficie:#FFFFFF; --hundido:#ECE8F5;
+  --tinta:#2A2440; --suave:#6D6785; --linea:#DDD8EA;
+  --accion:#6246EA; --sobre-accion:#FFFFFF; --acento-txt:#6246EA;
+  --hecho:#16876A; --sobre-hecho:#FFFFFF; --hecho-suave:#E2F4EE; --hecho-txt:#10705A;
+  --descanso:#F59A3C; --descanso-suave:#FFF1E2; --alerta:#D9434B;
+  --heroe:linear-gradient(90deg,#6246EA,#6246EA);
+  color-scheme:light;
+}
 @media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
+  :root:not([data-tema]),:root[data-tema="clasico"]{
     --fondo:#1C1828; --superficie:#27223A; --hundido:#1F1B2E;
     --tinta:#EEEAF7; --suave:#A7A0C2; --linea:#3A3452;
-    --accion:#A28FFF; --sobre-accion:#1C1530;
-    --hecho:#4FD1A5; --hecho-suave:#1F3A35; --descanso:#FFB46B; --descanso-suave:#3A2C24; --alerta:#FF7A80;
+    --accion:#A28FFF; --sobre-accion:#1C1530; --acento-txt:#B4A5FF;
+    --hecho:#4FD1A5; --sobre-hecho:#0F2A22; --hecho-suave:#1F3A35; --hecho-txt:#4FD1A5;
+    --descanso:#FFB46B; --descanso-suave:#3A2C24; --alerta:#FF7A80;
+    --heroe:linear-gradient(90deg,#A28FFF,#A28FFF);
+    color-scheme:dark;
   }
 }
-:root[data-theme="dark"]{
-  --fondo:#1C1828; --superficie:#27223A; --hundido:#1F1B2E;
-  --tinta:#EEEAF7; --suave:#A7A0C2; --linea:#3A3452;
-  --accion:#A28FFF; --sobre-accion:#1C1530;
-  --hecho:#4FD1A5; --hecho-suave:#1F3A35; --descanso:#FFB46B; --descanso-suave:#3A2C24; --alerta:#FF7A80;
+[data-tema="pastel"]{
+  --fondo:#F7F5FC; --superficie:#FFFFFF; --hundido:#EFEBFA;
+  --tinta:#3B3552; --suave:#6F6988; --linea:#E4DFF2;
+  --accion:#B8AEF5; --sobre-accion:#2C2550; --acento-txt:#6A5CC9;
+  --hecho:#A6DEC8; --sobre-hecho:#1D4A3B; --hecho-suave:#E8F7F1; --hecho-txt:#2E7D62;
+  --descanso:#F7B98B; --descanso-suave:#FFF1E6; --alerta:#D9667B;
+  --heroe:linear-gradient(90deg,#8C7FE6,#E67FA9 55%,#5FB8CF);
+  color-scheme:light;
+}
+[data-tema="midnight"]{
+  --fondo:#0D1324; --superficie:#161F37; --hundido:#10182C;
+  --tinta:#E6ECFF; --suave:#8E9AC2; --linea:#26314F;
+  --accion:#7EA6FF; --sobre-accion:#0A1330; --acento-txt:#9DBBFF;
+  --hecho:#62D5B4; --sobre-hecho:#072A20; --hecho-suave:#12302E; --hecho-txt:#62D5B4;
+  --descanso:#F6C87A; --descanso-suave:#2A2720; --alerta:#FF7D8C;
+  --heroe:linear-gradient(90deg,#7EA6FF,#B79CFF);
+  color-scheme:dark;
+}
+[data-tema="bosque"]{
+  --fondo:#12201A; --superficie:#1B2D25; --hundido:#16261F;
+  --tinta:#E5F1E7; --suave:#9BB6A4; --linea:#2B4337;
+  --accion:#A4DE8F; --sobre-accion:#13301B; --acento-txt:#B5E6A3;
+  --hecho:#68D1B2; --sobre-hecho:#0B2A21; --hecho-suave:#1B3B33; --hecho-txt:#7FDCC0;
+  --descanso:#F3D065; --descanso-suave:#302E1C; --alerta:#FF8E7A;
+  --heroe:linear-gradient(90deg,#A4DE8F,#F3D065);
+  color-scheme:dark;
+}
+[data-tema="atardecer"]{
+  --fondo:#FFF4EC; --superficie:#FFFFFF; --hundido:#FCE6D8;
+  --tinta:#3A2131; --suave:#80606F; --linea:#F1D5C6;
+  --accion:#C93D60; --sobre-accion:#FFFFFF; --acento-txt:#C23A5E;
+  --hecho:#187A6D; --sobre-hecho:#FFFFFF; --hecho-suave:#DDF2EE; --hecho-txt:#167468;
+  --descanso:#F28C28; --descanso-suave:#FFE9D4; --alerta:#B93044;
+  --heroe:linear-gradient(90deg,#F28C28,#D9466B 55%,#7A3E9D);
+  color-scheme:light;
+}
+[data-tema="rosa"]{
+  --fondo:#FFF1F5; --superficie:#FFFFFF; --hundido:#FCE3EB;
+  --tinta:#45182C; --suave:#8B5A6E; --linea:#F4D0DD;
+  --accion:#CF3570; --sobre-accion:#FFFFFF; --acento-txt:#C42F68;
+  --hecho:#23845F; --sobre-hecho:#FFFFFF; --hecho-suave:#DFF3EB; --hecho-txt:#227A5F;
+  --descanso:#F49A3C; --descanso-suave:#FFEEDD; --alerta:#BD2F46;
+  --heroe:linear-gradient(90deg,#DE3F7A,#F27AA7);
+  color-scheme:light;
+}
+[data-tema="heroe"]{
+  --fondo:#0C0E13; --superficie:#171A22; --hundido:#111319;
+  --tinta:#F3F5F9; --suave:#9AA2B4; --linea:#2A2F3B;
+  --accion:#E3262F; --sobre-accion:#FFFFFF; --acento-txt:#FF5A61;
+  --hecho:#2E6FE6; --sobre-hecho:#FFFFFF; --hecho-suave:#142441; --hecho-txt:#6FA0FF;
+  --descanso:#E9ECF2; --descanso-suave:#1E222C; --alerta:#FF5A61;
+  --heroe:linear-gradient(90deg,#E3262F,#2E6FE6);
+  color-scheme:dark;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
@@ -63,7 +119,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;padding:0 20px;border-radius:var(--radio-g);font-weight:600;font-size:1.05rem}
 .btn-p{background:var(--accion);color:var(--sobre-accion)}
 .btn-s{background:var(--superficie);border:1.5px solid var(--linea)}
-.btn-t{min-height:44px;color:var(--accion);font-weight:600}
+.btn-t{min-height:44px;color:var(--acento-txt);font-weight:600}
 .fila{display:flex;gap:10px;align-items:center}
 .fila>*{flex:1}
 
@@ -75,7 +131,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .saludo{margin-top:6px}
 .heroe{margin:20px 0 6px}
 .heroe .que{font-size:1.05rem;color:var(--suave)}
-.heroe .dia{font-family:"Rubik",system-ui,sans-serif;font-weight:700;font-size:clamp(4rem,19vw,6.5rem);line-height:.95;letter-spacing:-.03em;margin:2px 0 0;color:var(--accion)}
+.heroe .dia{font-family:"Rubik",system-ui,sans-serif;font-weight:700;font-size:clamp(4rem,19vw,6.5rem);line-height:.95;letter-spacing:-.03em;margin:2px 0 0;color:var(--acento-txt);background:var(--heroe);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
 .dias{display:flex;gap:8px;margin:16px 0 18px}
 .dias button{flex:1;min-height:46px;border-radius:999px;border:1.5px solid var(--linea);background:var(--superficie);font-weight:600}
 .dias button[aria-pressed="true"]{background:var(--tinta);color:var(--fondo);border-color:var(--tinta)}
@@ -111,7 +167,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .mas{min-width:44px;min-height:44px;margin:-10px -8px 0 0;border-radius:50%;font-size:1.4rem;line-height:1;color:var(--suave)}
 .ej-meta{margin-top:4px;font-size:.93rem;color:var(--suave)}
 .ej-meta b{color:var(--tinta);font-weight:600}
-.reemp{margin-top:6px;font-size:.93rem;color:var(--accion);font-weight:600}
+.reemp{margin-top:6px;font-size:.93rem;color:var(--acento-txt);font-weight:600}
 .pasos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 12px}
 .paso{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;background:var(--hundido);border-radius:var(--radio-c);min-height:64px}
 .paso button{height:64px;font-size:1.6rem;font-weight:500;color:var(--tinta);border-radius:var(--radio-c)}
@@ -119,12 +175,10 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .paso input{width:100%;text-align:center;border:0;background:transparent;font-family:"Rubik",system-ui,sans-serif;font-weight:600;font-size:1.6rem;line-height:1;padding:0;font-variant-numeric:tabular-nums}
 .paso span{font-size:.78rem;color:var(--suave);margin-top:1px}
 .pasos.uno{grid-template-columns:1fr}
-.hecho-btn{background:var(--hecho);color:#fff}
-:root[data-theme="dark"] .hecho-btn{color:#0F2A22}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hecho-btn{color:#0F2A22}}
+.hecho-btn{background:var(--hecho);color:var(--sobre-hecho)}
 .estado{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
 .estado .cond{font-size:1.15rem}
-.estado.ok .cond{color:var(--hecho)}
+.estado.ok .cond{color:var(--hecho-txt)}
 
 /* Capa (hojas y descanso) */
 #capa:empty{display:none}
@@ -149,6 +203,23 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .esf .chips{margin:10px 0 0}
 .esf .chips button{flex:1}
 
+/* Temas: selector */
+.temas{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.tema-card{background:var(--fondo);color:var(--tinta);border:2px solid var(--linea);border-radius:var(--radio-g);padding:14px;text-align:left;display:flex;flex-direction:column;gap:10px;min-height:150px}
+.tema-card[aria-pressed="true"]{border-color:var(--accion);box-shadow:0 0 0 2px var(--accion)}
+.tema-card .t-nombre{font-weight:600;font-size:1rem;display:flex;justify-content:space-between;gap:6px}
+.tema-card .t-dia{font-weight:700;font-size:1.9rem;line-height:1;letter-spacing:-.03em;background:var(--heroe);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
+.tema-card .t-fila{display:flex;gap:6px;align-items:center}
+.tema-card .t-btn{flex:1;background:var(--accion);color:var(--sobre-accion);border-radius:999px;padding:5px 8px;font-size:.78rem;font-weight:600;text-align:center}
+.tema-card .t-ok{flex:1;background:var(--hecho);color:var(--sobre-hecho);border-radius:999px;padding:5px 8px;font-size:.78rem;font-weight:600;text-align:center}
+.tema-card .t-sup{background:var(--superficie);border-radius:10px;padding:6px 8px;font-size:.78rem;color:var(--suave)}
+
+/* Timer de ejercicios por tiempo */
+.acciones-ej{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.timer-btn{background:var(--accion);color:var(--sobre-accion)}
+.descanso .t-lbl{font-size:1.15rem;font-weight:600}
+.descanso .t-sub{color:var(--suave);margin-top:4px}
+
 /* Pendientes */
 .recordatorio{background:var(--descanso-suave);border-radius:var(--radio-g);padding:16px;margin:0 0 20px}
 .recordatorio>p{margin:2px 0 6px}
@@ -162,7 +233,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .reg .hoy{font-weight:500;font-variant-numeric:tabular-nums;margin-top:2px}
 .cifras{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
 .cifra{background:var(--superficie);border-radius:var(--radio-c);padding:12px}
-.cifra .cond{font-size:1.9rem;line-height:1.1;display:block;color:var(--accion)}
+.cifra .cond{font-size:1.9rem;line-height:1.1;display:block;color:var(--acento-txt)}
 .cifra span:last-child{font-size:.88rem;color:var(--suave)}
 
 /* Historial */
@@ -193,7 +264,16 @@ button{cursor:pointer;border:0;background:none;padding:0}
 /* ===== Configuración ===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbyXTJNA6UevQVav4_562YObFajwNaltU_gnnbWkByrbNLH05sWKiFJYwGk54EVZef6I/exec';
 
-const K = { codigo: 'rut.codigo', cache: 'rut.cache', cola: 'rut.cola', sesion: 'rut.sesion' };
+const K = { codigo: 'rut.codigo', cache: 'rut.cache', cola: 'rut.cola', sesion: 'rut.sesion', tema: 'rut.tema' };
+const TEMAS = [
+  { id: 'clasico',   nombre: 'Clásico',          desc: 'Violeta y menta, claro u oscuro según tu celu' },
+  { id: 'pastel',    nombre: 'Pastel',           desc: 'Lavanda, menta y durazno' },
+  { id: 'midnight',  nombre: 'Midnight',         desc: 'Azul noche con brillo' },
+  { id: 'bosque',    nombre: 'Bosque encantado', desc: 'Verde profundo y luciérnagas' },
+  { id: 'atardecer', nombre: 'Atardecer',        desc: 'Naranja, coral y violeta' },
+  { id: 'rosa',      nombre: 'Rosa',             desc: 'Rosa chicle y verde' },
+  { id: 'heroe',     nombre: 'Superhéroe',       desc: 'Negro, rojo y azul' }
+];
 const MOTIVOS = ['Máquina ocupada', 'Molestia o dolor', 'No sé hacerlo', 'Sin tiempo', 'Otro'];
 const ESFUERZO = [{ v: 'facil', t: 'Fácil' }, { v: 'justo', t: 'Joyita' }, { v: 'costo', t: 'Me costó' }];
 
@@ -233,6 +313,17 @@ function fmtSerie(p, r, item) {
   const rr = fmtReps(r, item);
   return pp && rr ? `${pp} × ${rr}` : (pp || rr);
 }
+
+/* ===== Temas ===== */
+function aplicarTema(id) {
+  if (!TEMAS.some(t => t.id === id)) id = 'clasico';
+  document.documentElement.setAttribute('data-tema', id);
+  ls.set(K.tema, id);
+  const fondo = getComputedStyle(document.documentElement).getPropertyValue('--fondo').trim();
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.setAttribute('content', fondo); m.removeAttribute('media'); });
+}
+function temaActual() { return document.documentElement.getAttribute('data-tema') || 'clasico'; }
+aplicarTema(ls.get(K.tema, 'clasico'));
 
 /* ===== Estructura de la rutina ===== */
 function dias() { return [...new Set(D.detalle.map(d => Number(d.dia)))].sort((a, b) => a - b); }
@@ -328,7 +419,7 @@ async function enviarCola() {
   try {
     let c = ls.get(K.cola, []);
     while (c.length) {
-      const res = await apiGuardar(Object.assign({}, c[0], { action: 'guardar', u: codigo }));
+      const res = await apiGuardar(Object.assign({ action: 'guardar' }, c[0], { u: codigo }));
       if (!res.ok) throw new Error(res.error);
       c = ls.get(K.cola, []); c.shift(); ls.set(K.cola, c);
     }
@@ -519,6 +610,80 @@ function calcularResumen(estado) {
   };
 }
 
+/* ===== Timer de ejercicios por tiempo ===== */
+let sonoArranque = false;
+function iniciarTimerEj(ej) {
+  const item = itemDe(ej), b = draft(ej);
+  const seg = Math.max(1, Math.round(b.reps || num(item.reps) || 30));
+  const t0 = Date.now();
+  S.timerEj = { ej, prepHasta: t0 + 3000, hasta: t0 + 3000 + seg * 1000, total: seg };
+  sonoArranque = false;
+  guardarS(); pintarTimerEj();
+}
+function pintarTimerEj() {
+  const t = S.timerEj;
+  if (!t) return;
+  if (Date.now() >= t.hasta) { terminarTimerEj(true, t.total); return; }
+  const C = 2 * Math.PI * 46;
+  const nombre = S.reemplazos[t.ej] ? S.reemplazos[t.ej].nombre : nombreEj(t.ej);
+  $('#capa').innerHTML = `
+    <div class="descanso" role="dialog" aria-label="Timer de ${esc(nombre)}">
+      <p class="t-lbl">${esc(nombre)}</p>
+      <p class="t-sub" id="t-sub">Preparate</p>
+      <div class="anillo">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="var(--linea)" stroke-width="5"/>
+          <circle id="arco" cx="50" cy="50" r="46" fill="none" stroke="var(--accion)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="0"/>
+        </svg>
+        <div class="cuenta" id="cuenta"></div>
+      </div>
+      <div class="fila">
+        <button class="btn btn-s" data-a="cancelarTimerEj">Cancelar</button>
+        <button class="btn btn-p" data-a="cortarTimerEj">Terminé</button>
+      </div>
+    </div>`;
+  clearInterval(tick);
+  const actualizar = () => {
+    const ahoraMs = Date.now(), tt = S.timerEj;
+    if (!tt) return;
+    if (ahoraMs >= tt.hasta) { terminarTimerEj(true, tt.total); return; }
+    const c = $('#cuenta'), a = $('#arco'), s = $('#t-sub');
+    if (ahoraMs < tt.prepHasta) {
+      if (c) c.textContent = Math.ceil((tt.prepHasta - ahoraMs) / 1000);
+      if (s) s.textContent = 'Preparate';
+      if (a) a.setAttribute('stroke-dashoffset', '0');
+      return;
+    }
+    if (!sonoArranque) { sonoArranque = true; pitido(); }
+    const r = (tt.hasta - ahoraMs) / 1000;
+    if (c) c.textContent = Math.ceil(r);
+    if (s) s.textContent = '¡Dale!';
+    if (a) a.setAttribute('stroke-dashoffset', String(C * (1 - r / tt.total)));
+  };
+  actualizar();
+  tick = setInterval(actualizar, 200);
+}
+function terminarTimerEj(completo, segundos) {
+  const t = S.timerEj;
+  clearInterval(tick); tick = null;
+  S.timerEj = null;
+  if (completo) sonar();
+  $('#capa').innerHTML = ''; op = null;
+  if (t && segundos > 0) {
+    draft(t.ej).reps = segundos;
+    if (S.recup && String(S.recup.ej) === String(t.ej)) A.hechoRecup();
+    else A.hecho({ ej: t.ej });
+  } else { guardarS(); render(); }
+}
+function pitido() {
+  if (navigator.vibrate) navigator.vibrate(120);
+  if (!audio) return;
+  const o = audio.createOscillator(), g = audio.createGain(), s = audio.currentTime;
+  o.frequency.value = 660; o.connect(g); g.connect(audio.destination);
+  g.gain.setValueAtTime(0.0001, s); g.gain.exponentialRampToValueAtTime(0.3, s + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, s + 0.18);
+  o.start(s); o.stop(s + 0.2);
+}
+
 /* ===== Descanso ===== */
 function pintarDescanso() {
   const restan = Math.ceil((S.descansoHasta - Date.now()) / 1000);
@@ -577,7 +742,8 @@ function soltarWakeLock() { try { if (wakeLock) wakeLock.release(); } catch (e) 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && S && S.fase !== 'resumen') {
     pedirWakeLock();
-    if (S.descansoHasta) { if (S.descansoHasta > Date.now()) pintarDescanso(); else terminarDescanso(false); }
+    if (S.timerEj) pintarTimerEj();
+    else if (S.descansoHasta) { if (S.descansoHasta > Date.now()) pintarDescanso(); else terminarDescanso(false); }
   }
 });
 
@@ -612,6 +778,22 @@ function vSinRed() {
     <button class="btn btn-p" style="margin-top:10px" data-a="reintentar">Reintentar</button>`;
 }
 
+function vTemas() {
+  const actual = temaActual();
+  return `
+    <div class="barra"><button class="btn-t" data-a="inicio">Listo</button><span></span></div>
+    <h1>Elegí tu estilo</h1>
+    <p class="suave" style="margin-top:6px">Se guarda en tu perfil, así lo ves igual desde cualquier dispositivo.</p>
+    <div class="temas">${TEMAS.map(t => `
+      <button class="tema-card" data-tema="${t.id}" data-a="elegirTema" data-t="${t.id}" aria-pressed="${t.id === actual}">
+        <span class="t-nombre"><span>${esc(t.nombre)}</span>${t.id === actual ? '<span aria-hidden="true">✓</span>' : ''}</span>
+        <span class="t-dia">Día 2</span>
+        <span class="t-sup">${esc(t.desc)}</span>
+        <span class="t-fila"><span class="t-btn">Empezar</span><span class="t-ok">Hecho</span></span>
+      </button>`).join('')}
+    </div>`;
+}
+
 function vInicio() {
   if (!D.rutina || !D.detalle.length) {
     return `<p class="suave">Hola, ${esc(D.usuario.nombre)}</p><h1 style="margin-top:6px">Todavía no tenés una rutina activa</h1>
@@ -632,7 +814,7 @@ function vInicio() {
   const ultima = sesionesHechas()[0];
   return `
     <div class="barra"><p class="suave saludo">Hola, ${esc(D.usuario.nombre)}</p>
-      <button class="btn-t" data-a="historial">Historial</button></div>
+      <div style="display:flex;gap:14px"><button class="btn-t" data-a="temas">Estilo</button><button class="btn-t" data-a="historial">Historial</button></div></div>
     ${enCurso ? `<div class="pendiente"><p>Tenés el <b>Día ${S.dia}</b> sin terminar, empezado ${haceTxt(diasDesde(S.inicio))}.</p>
         <div class="fila"><button class="btn btn-s" data-a="descartar">Descartar</button><button class="btn btn-p" data-a="seguir">Seguir</button></div></div>` : ''}
     <div class="heroe">
@@ -708,7 +890,10 @@ function vTarjeta(item) {
       ${conPeso ? paso(ej, 'peso', b.peso, item.peso_modo === 'c/u' ? 'kg c/u' : 'kg') : ''}
       ${paso(ej, 'reps', b.reps, unidadReps(item))}
     </div>
-    <button class="btn hecho-btn" data-a="hecho" data-ej="${esc(ej)}">Hecho</button>
+    ${item.unidad === 'seg' ? `<div class="acciones-ej">
+      <button class="btn timer-btn" data-a="timerEj" data-ej="${esc(ej)}">Iniciar ${fmtNum(b.reps)} s</button>
+      <button class="btn hecho-btn" data-a="hecho" data-ej="${esc(ej)}">Hecho</button></div>`
+    : `<button class="btn hecho-btn" data-a="hecho" data-ej="${esc(ej)}">Hecho</button>`}
   </article>`;
 }
 function paso(ej, campo, valor, unidad) {
@@ -752,6 +937,7 @@ function vRecuperar() {
         ${conPeso ? paso(r.ej, 'peso', b.peso, item.peso_modo === 'c/u' ? 'kg c/u' : 'kg') : ''}
         ${paso(r.ej, 'reps', b.reps, unidadReps(item))}
       </div>
+      ${item.unidad === 'seg' ? `<button class="btn timer-btn" style="margin-bottom:10px" data-a="timerEj" data-ej="${esc(r.ej)}">Iniciar ${fmtNum(b.reps)} s</button>` : ''}
       <button class="btn hecho-btn" data-a="hechoRecup">Hecho, vuelta ${v}</button>
     </article>`;
 }
@@ -797,7 +983,7 @@ function sparkline(vals) {
   const w = 96, h = 30, min = Math.min(...vals), max = Math.max(...vals), rango = max - min || 1;
   const pts = vals.map((v, i) => `${(i / (vals.length - 1) * (w - 6) + 3).toFixed(1)},${(h - 4 - (v - min) / rango * (h - 8)).toFixed(1)}`).join(' ');
   const ult = pts.split(' ').pop().split(',');
-  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--accion)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${ult[0]}" cy="${ult[1]}" r="3" fill="var(--accion)"/></svg>`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--acento-txt)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${ult[0]}" cy="${ult[1]}" r="3" fill="var(--acento-txt)"/></svg>`;
 }
 function serieEjercicio(ej) {
   const porSesion = {};
@@ -911,10 +1097,20 @@ const A = {
   reintentar() { vista = { p: 'cargando' }; render(); cargar(); },
   elegirDia(d) { vista.dia = Number(d.dia); render(); },
   empezar(d) { empezar(Number(d.dia)); },
-  seguir() { vista = { p: 'entreno' }; pedirWakeLock(); render(); if (S.descansoHasta && S.descansoHasta > Date.now()) pintarDescanso(); },
+  seguir() { vista = { p: 'entreno' }; pedirWakeLock(); render(); if (S.timerEj) pintarTimerEj(); else if (S.descansoHasta && S.descansoHasta > Date.now()) pintarDescanso(); },
   descartar() { if (confirm('¿Descartar el entrenamiento sin terminar? Lo que ya se envió queda guardado.')) { S = null; guardarS(); render(); } },
   inicio() { vista = { p: 'inicio' }; cerrarCapa(); render(); window.scrollTo(0, 0); },
   historial() { vista = { p: 'historial' }; render(); window.scrollTo(0, 0); },
+  temas() { vista = { p: 'temas' }; render(); window.scrollTo(0, 0); },
+  elegirTema(d) {
+    if (d.t === temaActual()) return;
+    aplicarTema(d.t);
+    if (D && D.usuario) { D.usuario.tema = d.t; ls.set(K.cache, D); }
+    const c = ls.get(K.cola, []).filter(p => p.action !== 'tema');
+    ls.set(K.cola, c);
+    encolar({ action: 'tema', tema: d.t });
+    render();
+  },
   verEj(d) { vista = { p: 'ejercicio', ej: d.ej }; render(); window.scrollTo(0, 0); },
   paso(d) {
     const item = itemDe(d.ej), b = draft(d.ej), c = d.c;
@@ -926,6 +1122,8 @@ const A = {
     guardarS();
     const input = document.querySelector(`input[data-ej="${CSS.escape(d.ej)}"][data-c="${c}"]`);
     if (input) input.value = fmtNum(b[c]);
+    const tb = document.querySelector(`[data-a="timerEj"][data-ej="${CSS.escape(d.ej)}"]`);
+    if (tb && c === 'reps') tb.textContent = `Iniciar ${fmtNum(b[c])} s`;
   },
   hecho(d) {
     const item = itemDe(d.ej), b = borrador(item), rep = S.reemplazos[d.ej];
@@ -990,6 +1188,13 @@ const A = {
     guardarS(); render(); window.scrollTo(0, 0);
   },
   terminar() { pintarConfirmarFin(); },
+  timerEj(d) { iniciarTimerEj(d.ej); },
+  cancelarTimerEj() { terminarTimerEj(false, 0); },
+  cortarTimerEj() {
+    const t = S.timerEj; if (!t) return;
+    const hechos = Date.now() < t.prepHasta ? 0 : Math.min(t.total, Math.round((Date.now() - t.prepHasta) / 1000));
+    terminarTimerEj(false, hechos);
+  },
   terminarSi() { finalizar('incompleta', false); },
   cerrarResumen() { S = null; guardarS(); vista = { p: 'inicio' }; render(); window.scrollTo(0, 0); }
 };
@@ -1005,7 +1210,11 @@ document.addEventListener('input', e => {
   const t = e.target;
   if (t.dataset && t.dataset.c && t.dataset.ej && S) {
     const item = itemDe(t.dataset.ej);
-    if (item) { draft(t.dataset.ej)[t.dataset.c] = num(t.value); guardarS(); }
+    if (item) {
+      draft(t.dataset.ej)[t.dataset.c] = num(t.value); guardarS();
+      const tb = document.querySelector(`[data-a="timerEj"][data-ej="${CSS.escape(t.dataset.ej)}"]`);
+      if (tb && t.dataset.c === 'reps') tb.textContent = `Iniciar ${t.value || 0} s`;
+    }
   }
   if (t.id === 'reemplazo' && op) op.nombre = t.value;
 });
@@ -1021,6 +1230,7 @@ function render() {
     case 'sinred': html = vSinRed(); break;
     case 'cargando': html = '<p class="suave">Cargando tu rutina…</p>'; break;
     case 'historial': html = vHistorial(); break;
+    case 'temas': html = vTemas(); break;
     case 'ejercicio': html = vEjercicio(); break;
     case 'entreno': html = S ? vEntreno() : vInicio(); break;
     default: html = vInicio();
@@ -1039,6 +1249,8 @@ async function cargar() {
       return;
     }
     D = res;
+    const temaPendiente = ls.get(K.cola, []).some(p => p.action === 'tema');
+    if (D.usuario && D.usuario.tema && !temaPendiente && D.usuario.tema !== temaActual()) aplicarTema(D.usuario.tema);
     ls.get(K.cola, []).forEach(aplicarLocal);
     ls.set(K.cache, D);
     if (vista.p === 'cargando' || vista.p === 'sinred') vista = { p: S && S.fase !== 'resumen' ? 'entreno' : (S ? 'entreno' : 'inicio') };
@@ -1061,7 +1273,8 @@ function arrancar() {
   if (D) {
     vista = { p: S ? 'entreno' : 'inicio' };
     render();
-    if (S && S.fase !== 'resumen') { pedirWakeLock(); if (S.descansoHasta) { if (S.descansoHasta > Date.now()) pintarDescanso(); else { S.descansoHasta = null; guardarS(); } } }
+    if (S && S.fase !== 'resumen' && S.timerEj) { pedirWakeLock(); pintarTimerEj(); }
+    else if (S && S.fase !== 'resumen') { pedirWakeLock(); if (S.descansoHasta) { if (S.descansoHasta > Date.now()) pintarDescanso(); else { S.descansoHasta = null; guardarS(); } } }
   } else { vista = { p: 'cargando' }; render(); }
   cargar();
 }
