@@ -331,7 +331,16 @@ a.btn{text-decoration:none}
 const API_URL = 'https://script.google.com/macros/s/AKfycbyXTJNA6UevQVav4_562YObFajwNaltU_gnnbWkByrbNLH05sWKiFJYwGk54EVZef6I/exec';
 
 const KP = { codigo: 'rutp.codigo', tema: 'rut.tema' };
-const TEMAS = ['clasico', 'pastel', 'midnight', 'bosque', 'atardecer', 'darksunset', 'rosa', 'heroe'];
+const TEMAS = [
+  { id: 'clasico',    nombre: 'Classic',          desc: 'Violeta y menta, claro u oscuro según tu celu' },
+  { id: 'pastel',     nombre: 'Pastel',           desc: 'Lavanda, menta y durazno' },
+  { id: 'midnight',   nombre: 'Midnight',         desc: 'Azul noche con brillo' },
+  { id: 'bosque',     nombre: 'Enchanted Forest', desc: 'Verde profundo y luciérnagas' },
+  { id: 'atardecer',  nombre: 'Sunset',           desc: 'Naranja, coral y violeta' },
+  { id: 'darksunset', nombre: 'Dark Sunset',      desc: 'El atardecer, pero de noche' },
+  { id: 'rosa',       nombre: 'Pink',             desc: 'Rosa chicle y verde' },
+  { id: 'heroe',      nombre: 'Marvel',           desc: 'Negro, rojo y azul' }
+];
 
 const ls = {
   get(k, def) { try { const v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } },
@@ -359,10 +368,13 @@ function aviso(t) { const a = $('#aviso'); a.textContent = t; a.classList.add('v
 function cerrarCapa() { $('#capa').innerHTML = ''; pick = null; }
 
 function aplicarTema(id) {
-  if (!TEMAS.includes(id)) id = 'clasico';
+  if (!TEMAS.some(t => t.id === id)) id = 'clasico';
   document.documentElement.setAttribute('data-tema', id);
   ls.set(KP.tema, id);
+  const fondo = getComputedStyle(document.documentElement).getPropertyValue('--fondo').trim();
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.setAttribute('content', fondo); m.removeAttribute('media'); });
 }
+function temaActual() { return document.documentElement.getAttribute('data-tema') || 'clasico'; }
 aplicarTema(ls.get(KP.tema, 'clasico'));
 
 function linkAlumno(a) {
@@ -410,7 +422,7 @@ async function cargar() {
 /* ===== Vistas ===== */
 function vLogin() {
   return `
-    <h1>Panel del profe</h1>
+    <h1>Panel de profe</h1>
     <p class="suave" style="margin:10px 0 18px">Ingresá tu código de profe.</p>
     ${vista.error ? `<p style="color:var(--alerta);margin-bottom:10px">${esc(vista.error)}</p>` : ''}
     <input class="campo" id="codigo-in" autocomplete="off" autocapitalize="none" placeholder="Código de profe">
@@ -432,7 +444,7 @@ function vAlumnos() {
   const sinRutina = activos.filter(a => !a.rutina).length;
   return `
     <div class="barra"><p class="suave saludo">Hola, ${esc(P.profe.nombre)}</p>
-      <button class="btn-t" data-a="nuevoAlumno">+ Alumno</button></div>
+      <div style="display:flex;gap:14px"><button class="btn-t" data-a="temas">Estilo</button><button class="btn-t" data-a="nuevoAlumno">+ Alumno</button></div></div>
     <h1>Tus alumnos</h1>
     <div class="resumen-profe">
       <div class="cifra"><span class="cond">${activos.length}</span><span>activos</span></div>
@@ -461,6 +473,22 @@ function tarjetaAlumno(a) {
       <button class="btn btn-s" style="flex:0 0 52px" data-a="masAlumno" data-id="${esc(a.usuario_id)}" aria-label="Más opciones de ${esc(a.nombre)}">⋯</button>
     </div>
   </article>`;
+}
+
+function vTemas() {
+  const actual = temaActual();
+  return `
+    <div class="barra"><button class="btn-t" data-a="volver">Listo</button><span></span></div>
+    <h1>Elegí tu estilo</h1>
+    <p class="suave" style="margin-top:6px">Se guarda en tu perfil. Cada alumno elige el suyo desde su app.</p>
+    <div class="temas">${TEMAS.map(t => `
+      <button class="tema-card" data-tema="${t.id}" data-a="elegirTema" data-t="${t.id}" aria-pressed="${t.id === actual}">
+        <span class="t-nombre"><span>${esc(t.nombre)}</span>${t.id === actual ? '<span aria-hidden="true">✓</span>' : ''}</span>
+        <span class="t-dia">Día 2</span>
+        <span class="t-sup">${esc(t.desc)}</span>
+        <span class="t-fila"><span class="t-btn">Empezar</span><span class="t-ok">Hecho</span></span>
+      </button>`).join('')}
+    </div>`;
 }
 
 function vNuevoAlumno() {
@@ -750,6 +778,20 @@ const A = {
   entrar() { const v = ($('#codigo-in').value || '').trim(); if (!v) return; codigo = v; ls.set(KP.codigo, v); vista = { p: 'cargando' }; render(); cargar(); },
   reintentar() { vista = { p: 'cargando' }; render(); cargar(); },
   volver() { vista = { p: 'alumnos' }; render(); window.scrollTo(0, 0); },
+  temas() { vista = { p: 'temas' }; render(); window.scrollTo(0, 0); },
+  async elegirTema(d) {
+    if (d.t === temaActual()) return;
+    const anterior = temaActual();
+    aplicarTema(d.t); render();
+    try {
+      const res = await apiPost({ action: 'tema', tema: d.t });
+      if (!res.ok) throw new Error(res.error);
+      P.profe.tema = d.t;
+    } catch (e) {
+      aplicarTema(anterior); render();
+      aviso('No se pudo guardar el estilo. Revisá la conexión.');
+    }
+  },
   nuevoAlumno() { vista = { p: 'nuevoAlumno' }; render(); setTimeout(() => { const i = $('#nombre-alumno'); if (i) i.focus(); }, 50); },
   async crearAlumno() {
     const nombre = ($('#nombre-alumno').value || '').trim();
@@ -880,7 +922,7 @@ document.addEventListener('keydown', e => {
 
 /* ===== Render y arranque ===== */
 function render() {
-  const vistas = { login: vLogin, error: vError, alumnos: vAlumnos, nuevoAlumno: vNuevoAlumno, editor: vEditor };
+  const vistas = { login: vLogin, error: vError, alumnos: vAlumnos, nuevoAlumno: vNuevoAlumno, editor: vEditor, temas: vTemas };
   $('#app').innerHTML = vista.p === 'cargando' ? '<p class="suave">Cargando…</p>' : (vistas[vista.p] || vAlumnos)();
 }
 function arrancar() {
