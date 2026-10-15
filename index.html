@@ -12,7 +12,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ===== Temas ===== */
 :root{
@@ -77,6 +77,15 @@
   --heroe:linear-gradient(90deg,#F28C28,#D9466B 55%,#7A3E9D);
   color-scheme:light;
 }
+[data-tema="darksunset"]{
+  --fondo:#1D1220; --superficie:#2A1A2D; --hundido:#221525;
+  --tinta:#FBEDEA; --suave:#C4A4B0; --linea:#45293F;
+  --accion:#FF7A59; --sobre-accion:#2A0F08; --acento-txt:#FF9C7E;
+  --hecho:#3CC6B0; --sobre-hecho:#082A25; --hecho-suave:#163330; --hecho-txt:#5ED6C2;
+  --descanso:#FFB347; --descanso-suave:#3A2618; --alerta:#FF6B81;
+  --heroe:linear-gradient(90deg,#FFB347,#FF6B6B 50%,#C86DD7);
+  color-scheme:dark;
+}
 [data-tema="rosa"]{
   --fondo:#FFF1F5; --superficie:#FFFFFF; --hundido:#FCE3EB;
   --tinta:#45182C; --suave:#8B5A6E; --linea:#F4D0DD;
@@ -100,14 +109,14 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 html,body{margin:0}
 body{
   background:var(--fondo); color:var(--tinta);
-  font:400 16px/1.5 "Rubik",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font:400 16px/1.5 "Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
   -webkit-tap-highlight-color:transparent;
 }
 main{max-width:560px;margin:0 auto;padding:18px 18px 56px}
-h1,h2,h3,.cond{font-family:"Rubik",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:600;letter-spacing:-.01em}
+h1,h2,h3,.cond{font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:800;letter-spacing:-.01em}
 h1{font-size:1.85rem;line-height:1.1;margin:0}
 h2{font-size:1.25rem;line-height:1.2;margin:28px 0 10px}
-h3{font-size:1.1rem;line-height:1.25;margin:0;font-weight:500}
+h3{font-size:1.1rem;line-height:1.25;margin:0;font-weight:700}
 p{margin:0}
 .suave{color:var(--suave)}
 .chico{font-size:.9rem}
@@ -116,10 +125,10 @@ button{cursor:pointer;border:0;background:none;padding:0}
 :focus-visible{outline:3px solid var(--accion);outline-offset:2px;border-radius:6px}
 
 /* Botones */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;padding:0 20px;border-radius:var(--radio-g);font-weight:600;font-size:1.05rem}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;padding:0 20px;border-radius:var(--radio-g);font-weight:700;font-size:1.05rem}
 .btn-p{background:var(--accion);color:var(--sobre-accion)}
 .btn-s{background:var(--superficie);border:1.5px solid var(--linea)}
-.btn-t{min-height:44px;color:var(--acento-txt);font-weight:600}
+.btn-t{min-height:44px;color:var(--acento-txt);font-weight:700}
 .fila{display:flex;gap:10px;align-items:center}
 .fila>*{flex:1}
 
@@ -131,7 +140,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .saludo{margin-top:6px}
 .heroe{margin:20px 0 6px}
 .heroe .que{font-size:1.05rem;color:var(--suave)}
-.heroe .dia{font-family:"Rubik",system-ui,sans-serif;font-weight:700;font-size:clamp(4rem,19vw,6.5rem);line-height:.95;letter-spacing:-.03em;margin:2px 0 0;color:var(--acento-txt);background:var(--heroe);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
+.heroe .dia{font-family:"Nunito",system-ui,sans-serif;font-weight:800;font-size:clamp(4rem,19vw,6.5rem);line-height:.95;letter-spacing:-.03em;margin:2px 0 0;color:var(--acento-txt);background:var(--heroe);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
 .dias{display:flex;gap:8px;margin:16px 0 18px}
 .dias button{flex:1;min-height:46px;border-radius:999px;border:1.5px solid var(--linea);background:var(--superficie);font-weight:600}
 .dias button[aria-pressed="true"]{background:var(--tinta);color:var(--fondo);border-color:var(--tinta)}
@@ -172,7 +181,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .paso{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;background:var(--hundido);border-radius:var(--radio-c);min-height:64px}
 .paso button{height:64px;font-size:1.6rem;font-weight:500;color:var(--tinta);border-radius:var(--radio-c)}
 .paso label{display:flex;flex-direction:column;align-items:center}
-.paso input{width:100%;text-align:center;border:0;background:transparent;font-family:"Rubik",system-ui,sans-serif;font-weight:600;font-size:1.6rem;line-height:1;padding:0;font-variant-numeric:tabular-nums}
+.paso input{width:100%;text-align:center;border:0;background:transparent;font-family:"Nunito",system-ui,sans-serif;font-weight:800;font-size:1.6rem;line-height:1;padding:0;font-variant-numeric:tabular-nums}
 .paso span{font-size:.78rem;color:var(--suave);margin-top:1px}
 .pasos.uno{grid-template-columns:1fr}
 .hecho-btn{background:var(--hecho);color:var(--sobre-hecho)}
@@ -195,7 +204,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .descanso{position:fixed;inset:0;z-index:11;background:var(--fondo);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 .anillo{position:relative;width:min(72vw,300px);aspect-ratio:1;margin:18px 0 26px}
 .anillo svg{width:100%;height:100%;transform:rotate(-90deg)}
-.anillo .cuenta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Rubik",system-ui,sans-serif;font-weight:600;font-size:clamp(4rem,19vw,5.5rem);font-variant-numeric:tabular-nums}
+.anillo .cuenta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Nunito",system-ui,sans-serif;font-weight:800;font-size:clamp(4rem,19vw,5.5rem);font-variant-numeric:tabular-nums}
 .descanso .fila{width:100%;max-width:400px}
 
 /* Esfuerzo */
@@ -208,7 +217,7 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .tema-card{background:var(--fondo);color:var(--tinta);border:2px solid var(--linea);border-radius:var(--radio-g);padding:14px;text-align:left;display:flex;flex-direction:column;gap:10px;min-height:150px}
 .tema-card[aria-pressed="true"]{border-color:var(--accion);box-shadow:0 0 0 2px var(--accion)}
 .tema-card .t-nombre{font-weight:600;font-size:1rem;display:flex;justify-content:space-between;gap:6px}
-.tema-card .t-dia{font-weight:700;font-size:1.9rem;line-height:1;letter-spacing:-.03em;background:var(--heroe);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
+.tema-card .t-dia{font-weight:800;font-size:1.9rem;line-height:1;letter-spacing:-.03em;background:var(--heroe);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content}
 .tema-card .t-fila{display:flex;gap:6px;align-items:center}
 .tema-card .t-btn{flex:1;background:var(--accion);color:var(--sobre-accion);border-radius:999px;padding:5px 8px;font-size:.78rem;font-weight:600;text-align:center}
 .tema-card .t-ok{flex:1;background:var(--hecho);color:var(--sobre-hecho);border-radius:999px;padding:5px 8px;font-size:.78rem;font-weight:600;text-align:center}
@@ -266,13 +275,14 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbyXTJNA6UevQVav4_562YOb
 
 const K = { codigo: 'rut.codigo', cache: 'rut.cache', cola: 'rut.cola', sesion: 'rut.sesion', tema: 'rut.tema' };
 const TEMAS = [
-  { id: 'clasico',   nombre: 'Clásico',          desc: 'Violeta y menta, claro u oscuro según tu celu' },
-  { id: 'pastel',    nombre: 'Pastel',           desc: 'Lavanda, menta y durazno' },
-  { id: 'midnight',  nombre: 'Midnight',         desc: 'Azul noche con brillo' },
-  { id: 'bosque',    nombre: 'Bosque encantado', desc: 'Verde profundo y luciérnagas' },
-  { id: 'atardecer', nombre: 'Atardecer',        desc: 'Naranja, coral y violeta' },
-  { id: 'rosa',      nombre: 'Rosa',             desc: 'Rosa chicle y verde' },
-  { id: 'heroe',     nombre: 'Superhéroe',       desc: 'Negro, rojo y azul' }
+  { id: 'clasico',    nombre: 'Classic',          desc: 'Violeta y menta, claro u oscuro según tu celu' },
+  { id: 'pastel',     nombre: 'Pastel',           desc: 'Lavanda, menta y durazno' },
+  { id: 'midnight',   nombre: 'Midnight',         desc: 'Azul noche con brillo' },
+  { id: 'bosque',     nombre: 'Forest',           desc: 'Verde profundo y luciérnagas' },
+  { id: 'atardecer',  nombre: 'Sunset',           desc: 'Naranja, coral y violeta' },
+  { id: 'darksunset', nombre: 'Dark Sunset',      desc: 'El atardecer, pero de noche' },
+  { id: 'rosa',       nombre: 'Pink',             desc: 'Rosa chicle y verde' },
+  { id: 'heroe',      nombre: 'Marvel',           desc: 'Negro, rojo y azul' }
 ];
 const MOTIVOS = ['Máquina ocupada', 'Molestia o dolor', 'No sé hacerlo', 'Sin tiempo', 'Otro'];
 const ESFUERZO = [{ v: 'facil', t: 'Fácil' }, { v: 'justo', t: 'Joyita' }, { v: 'costo', t: 'Me costó' }];
@@ -445,15 +455,30 @@ function borrador(item) {
   if (S.borr[k]) return S.borr[k];
   let base = null;
   const u = S.reemplazos[ej] ? null : ultimaVez(ej, S.sesion_id);
-  // 1) lo que hiciste en esta misma vuelta la última vez
-  if (u) { const f = u.filas.find(x => Number(x.vuelta) === S.vuelta); if (f) base = { peso: num(f.peso), reps: num(f.reps) }; }
-  // 2) lo que hiciste en la vuelta anterior de hoy
-  for (let pv = S.vuelta - 1; pv >= 1 && !base; pv--) {
+  const filaAntes = v => (u ? u.filas.find(x => Number(x.vuelta) === v) : null);
+  // la vuelta anterior de hoy (si la hiciste)
+  let hoyPrev = null, pvNum = null;
+  for (let pv = S.vuelta - 1; pv >= 1 && !hoyPrev; pv--) {
     const m = S.marcas[clave(S.bi, pv, ej)];
-    if (m && m.estado !== 'salteado') base = { peso: m.peso, reps: m.reps };
+    if (m && m.estado !== 'salteado') { hoyPrev = m; pvNum = pv; }
   }
-  // 3) la última vuelta registrada la vez anterior, o el objetivo de la rutina
-  if (!base && u) { const f = u.filas[u.filas.length - 1]; base = { peso: num(f.peso), reps: num(f.reps) }; }
+  const antesV = filaAntes(S.vuelta), antesPrev = pvNum ? filaAntes(pvNum) : null;
+  if (hoyPrev && antesV && antesPrev) {
+    // Sigue la progresión de la vez anterior, pero con el cambio que hiciste hoy.
+    // Ej.: la vez anterior 55 → 57,5 → 60. Hoy en la vuelta 1 hiciste 57,5 → te propone 60 y después 62,5.
+    // Si la vez anterior fue pareja (55, 55, 55) y hoy subiste a 57,5 → sigue en 57,5.
+    const pHoy = hoyPrev.peso, pPrev = num(antesPrev.peso), pV = num(antesV.peso);
+    const peso = pHoy != null && pPrev != null && pV != null ? Math.round((pV + (pHoy - pPrev)) * 100) / 100
+      : (pHoy != null ? pHoy : pV);
+    const reps = hoyPrev.reps !== num(antesPrev.reps) ? hoyPrev.reps : num(antesV.reps);
+    base = { peso, reps };
+  } else if (hoyPrev) {
+    base = { peso: hoyPrev.peso, reps: hoyPrev.reps };
+  } else if (antesV) {
+    base = { peso: num(antesV.peso), reps: num(antesV.reps) };
+  } else if (u) {
+    const f = u.filas[u.filas.length - 1]; base = { peso: num(f.peso), reps: num(f.reps) };
+  }
   if (!base) base = { peso: num(item.peso), reps: num(item.reps) };
   S.borr[k] = Object.assign({}, base);
   return S.borr[k];
