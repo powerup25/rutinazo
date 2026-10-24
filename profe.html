@@ -514,7 +514,7 @@ function vNuevoAlumno() {
 
 function botonesCompartir(a) {
   const link = linkAlumno(a);
-  const msg = `¡Hola ${a.nombre}! Esta es tu rutina en Rutinazo: ${link}\nAbrilo desde el celu y agregalo a la pantalla de inicio para tenerlo a mano.`;
+  const msg = `Hola ${a.nombre}! Te paso tu nueva rutina: ${link}\nAbrí el link desde el celu y agregalo a tu pantalla de inicio para tenerlo a mano.`;
   return `<button class="btn btn-s" style="margin-top:10px" data-a="copiar" data-txt="${esc(link)}">Copiar link</button>
     <a class="btn btn-s" style="margin-top:10px" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Enviar por WhatsApp</a>
     ${navigator.share ? `<button class="btn btn-s" style="margin-top:10px" data-a="compartirNativo" data-id="${esc(a.usuario_id)}">Compartir…</button>` : ''}`;
