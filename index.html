@@ -229,6 +229,11 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .descanso .t-lbl{font-size:1.15rem;font-weight:600}
 .descanso .t-sub{color:var(--suave);margin-top:4px}
 
+/* Video y pendientes */
+.video-link{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 14px;border-radius:999px;background:var(--hundido);color:var(--acento-txt);font-weight:700;font-size:.92rem;text-decoration:none;min-height:38px}
+.video-mini{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--hundido);color:var(--acento-txt);font-size:.7rem;text-decoration:none;vertical-align:middle;margin-left:4px}
+.aviso-pend{background:var(--descanso-suave);border-radius:var(--radio-c);padding:8px 14px;margin:0 0 14px}
+
 /* Pendientes */
 .recordatorio{background:var(--descanso-suave);border-radius:var(--radio-g);padding:16px;margin:0 0 20px}
 .recordatorio>p{margin:2px 0 6px}
@@ -278,7 +283,7 @@ const TEMAS = [
   { id: 'clasico',    nombre: 'Classic',          desc: 'Violeta y menta, claro u oscuro según tu celu' },
   { id: 'pastel',     nombre: 'Pastel',           desc: 'Lavanda, menta y durazno' },
   { id: 'midnight',   nombre: 'Midnight',         desc: 'Azul noche con brillo' },
-  { id: 'bosque',     nombre: 'Forest',           desc: 'Verde profundo y luciérnagas' },
+  { id: 'bosque',     nombre: 'Enchanted Forest', desc: 'Verde profundo y luciérnagas' },
   { id: 'atardecer',  nombre: 'Sunset',           desc: 'Naranja, coral y violeta' },
   { id: 'darksunset', nombre: 'Dark Sunset',      desc: 'El atardecer, pero de noche' },
   { id: 'rosa',       nombre: 'Pink',             desc: 'Rosa chicle y verde' },
@@ -631,7 +636,7 @@ function calcularResumen(estado) {
   }));
   return {
     estado, minutos: Math.max(1, Math.round((Date.now() - new Date(S.inicio)) / 60000)),
-    hechos: hechos.size, salteados: [...salteados].filter(e => !hechos.has(e)).length, cambios: cambios.size, subidas, detalle
+    hechos: hechos.size, salteados: salteados.size, cambios: cambios.size, subidas, detalle
   };
 }
 
@@ -854,7 +859,8 @@ function vInicio() {
         <ul class="lista">${b.items.map(it => {
           const u = ultimaVez(it.ejercicio_id);
           const txt = u ? textoUltima(u, it) : fmtSerie(num(it.peso), num(it.reps), it);
-          return `<li><span>${esc(nombreEj(it.ejercicio_id))}</span><span class="obj">${esc(txt)}</span></li>`;
+          const vid = (D.ejercicios[it.ejercicio_id] || {}).video_url;
+          return `<li><span>${esc(nombreEj(it.ejercicio_id))}${vid ? ` <a class="video-mini" href="${esc(vid)}" target="_blank" rel="noopener" aria-label="Ver cómo se hace ${esc(nombreEj(it.ejercicio_id))}">▶</a>` : ''}</span><span class="obj">${esc(txt)}</span></li>`;
         }).join('')}</ul>
       </section>`).join('')}
     ${avisoRut}
@@ -863,6 +869,7 @@ function vInicio() {
 
 function vEntreno() {
   if (S.fase === 'resumen') return vResumen();
+  if (S.recup) return vRecuperar();
   if (S.fase === 'esfuerzo') return vEsfuerzo();
   const bls = bloquesSesion(), bl = bloqueActual();
   const titulo = bl.tipo === 'series' ? `Ejercicio ${S.bi + 1} de ${bls.length}` : `Circuito ${S.bi + 1} de ${bls.length}`;
@@ -882,7 +889,18 @@ function vEntreno() {
       <div><div class="discos" aria-hidden="true">${discos}</div>
         <p class="vuelta-txt">${bl.tipo === 'series' ? 'Serie' : 'Vuelta'} ${S.vuelta} de ${bl.vueltas}</p></div>
     </div>
+    ${vAvisoPendientes()}
     ${bl.items.map(vTarjeta).join('')}`;
+}
+
+// Mientras hacés otro circuito, recordatorio corto de lo que quedó pendiente de circuitos anteriores
+function vAvisoPendientes() {
+  const pend = pendientesSesion().filter(p => p.bi < S.bi);
+  if (!pend.length) return '';
+  return `<div class="aviso-pend">${pend.map(p => `<div class="fila" style="gap:8px">
+      <p class="chico" style="flex:1">Pendiente: <b>${esc(nombreEj(p.ej))}</b></p>
+      <button class="btn-t chico" style="flex:0 0 auto;width:auto" data-a="recuperar" data-k="${esc(p.k)}">Hacerlo ahora</button>
+    </div>`).join('')}</div>`;
 }
 
 function vTarjeta(item) {
@@ -893,6 +911,7 @@ function vTarjeta(item) {
     (u && !rep ? `<br>Última vez (${fmtFecha(u.ts)}): <b>${esc(textoUltima(u, item))}</b>` : '') +
     (fv && !rep ? `<br>En la vuelta ${S.vuelta}: <b>${esc(fmtSerie(num(fv.peso), num(fv.reps), item))}</b>` : '');
   const nombre = esc(nombreEj(ej));
+  const video = !rep && (D.ejercicios[ej] || {}).video_url;
   if (m) {
     const ok = m.estado !== 'salteado';
     return `<article class="ej ${ok ? 'ok' : 'salt'}">
@@ -910,6 +929,7 @@ function vTarjeta(item) {
   return `<article class="ej">
     <div class="ej-cab"><h3>${nombre}</h3>
       <button class="mas" data-a="opciones" data-ej="${esc(ej)}" aria-label="Opciones de ${nombre}">⋯</button></div>
+    ${video ? `<a class="video-link" href="${esc(video)}" target="_blank" rel="noopener">▶ Ver cómo se hace</a>` : ''}
     ${rep ? `<p class="reemp">En su lugar: ${esc(rep.nombre)}</p>` : `<p class="ej-meta">${meta}</p>`}
     <div class="pasos ${conPeso ? '' : 'uno'}">
       ${conPeso ? paso(ej, 'peso', b.peso, item.peso_modo === 'c/u' ? 'kg c/u' : 'kg') : ''}
@@ -931,8 +951,9 @@ function paso(ej, campo, valor, unidad) {
 }
 
 function vPendientes() {
-  const pend = pendientesSesion();
+  const pend = pendientesSesion().filter(p => !(S.pospuestos && S.pospuestos[p.k] === S.bi));
   if (!pend.length) return '';
+  const ultimoBloque = S.bi >= bloquesSesion().length - 1;
   const txtVueltas = v => v.length === 1 ? `la vuelta ${v[0]}` : `las vueltas ${v.slice(0, -1).join(', ')} y ${v[v.length - 1]}`;
   return `<div class="recordatorio">
     <h3>Te quedó pendiente</h3>
@@ -940,8 +961,10 @@ function vPendientes() {
     ${pend.map(p => `<div class="pend-item">
       <p><b>${esc(nombreEj(p.ej))}</b></p>
       <p class="suave chico">Salteaste ${txtVueltas(p.vueltas)}${p.motivo ? ` (${esc(p.motivo.toLowerCase())})` : ''}</p>
-      <div class="fila"><button class="btn btn-s" data-a="dejarPend" data-k="${esc(p.k)}">Dejarlo así</button>
-        <button class="btn btn-p" data-a="recuperar" data-k="${esc(p.k)}">Hacerlo ahora</button></div>
+      <button class="btn btn-p" style="margin-top:10px" data-a="recuperar" data-k="${esc(p.k)}">Ya se liberó, lo hago</button>
+      <div class="fila">${ultimoBloque ? '' : `<button class="btn btn-s" data-a="posponerPend" data-k="${esc(p.k)}">Sigue ocupada</button>`}
+        <button class="btn btn-s" data-a="dejarPend" data-k="${esc(p.k)}">No lo voy a hacer</button></div>
+      ${ultimoBloque ? '' : '<p class="suave chico" style="margin-top:8px">Si sigue ocupada, te lo vuelvo a recordar al terminar el próximo circuito.</p>'}
     </div>`).join('')}
   </div>`;
 }
@@ -956,6 +979,7 @@ function vRecuperar() {
     <p class="suave">Recuperando ${r.vueltas.length > 1 ? `${r.vueltas.length} vueltas` : 'una vuelta'}</p>
     <article class="ej" style="margin-top:10px">
       <h3>${esc(nombreEj(r.ej))}</h3>
+      ${(D.ejercicios[r.ej] || {}).video_url ? `<a class="video-link" href="${esc(D.ejercicios[r.ej].video_url)}" target="_blank" rel="noopener">▶ Ver cómo se hace</a>` : ''}
       <p class="ej-meta">Vuelta ${v}. Objetivo <b>${esc(fmtSerie(num(item.peso), num(item.reps), item))}</b>
         ${fv ? `<br>La última vez en esta vuelta: <b>${esc(fmtSerie(num(fv.peso), num(fv.reps), item))}</b>` : ''}</p>
       <div class="pasos ${conPeso ? '' : 'uno'}">
@@ -991,8 +1015,8 @@ function vResumen() {
     <h1 style="font-size:3rem;margin-top:4px">Día ${S.dia} listo</h1>
     <div class="cifras">
       <div class="cifra"><span class="cond">${r.minutos}</span><span>minutos</span></div>
-      <div class="cifra"><span class="cond">${r.hechos}</span><span>ejercicios</span></div>
-      <div class="cifra"><span class="cond">${r.salteados}</span><span>salteados</span></div>
+      <div class="cifra"><span class="cond">${r.hechos}</span><span>${r.hechos === 1 ? 'ejercicio' : 'ejercicios'}</span></div>
+      <div class="cifra"><span class="cond">${r.salteados}</span><span>${r.salteados === 1 ? 'salteado' : 'salteados'}</span></div>
     </div>
     ${r.subidas.length ? `<h2>Subiste de peso</h2><ul class="lista">${r.subidas.map(s => `<li><span>${esc(nombreEj(s.ej))}</span><span class="obj">${fmtNum(s.antes)} → ${fmtNum(s.ahora)} kg</span></li>`).join('')}</ul>` : ''}
     ${r.cambios ? `<p class="suave" style="margin-top:14px">Cambiaste ${r.cambios} ${r.cambios === 1 ? 'ejercicio' : 'ejercicios'} por otro.</p>` : ''}
@@ -1088,7 +1112,6 @@ function pintarOpciones() {
   let cuerpo;
   if (!op.modo) {
     cuerpo = `
-      ${video ? `<a class="btn btn-s" href="${esc(video)}" target="_blank" rel="noopener">Ver cómo se hace</a>` : ''}
       <button class="btn btn-s" data-a="opModo" data-m="saltear">Saltear este ejercicio</button>
       ${rep ? `<button class="btn btn-s" data-a="opOriginal">Volver a ${nombre}</button>`
             : `<button class="btn btn-s" data-a="opModo" data-m="cambiar">Cambiarlo por otro</button>`}
@@ -1193,6 +1216,7 @@ const A = {
     S.recup = { bi: p.bi, ej: p.ej, vueltas: p.vueltas.slice(), borr: null };
     guardarS(); render(); window.scrollTo(0, 0);
   },
+  posponerPend(d) { S.pospuestos = S.pospuestos || {}; S.pospuestos[d.k] = S.bi; guardarS(); render(); aviso('Te lo recuerdo al final del próximo circuito'); },
   dejarPend(d) { S.descartados = S.descartados || {}; S.descartados[d.k] = true; guardarS(); render(); },
   cancelarRecup() { S.recup = null; guardarS(); render(); },
   hechoRecup() {
