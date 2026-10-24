@@ -318,6 +318,8 @@ select.campo,select.campo-c{color:inherit;font:inherit}
 .pick-op{display:block;width:100%;text-align:left;min-height:46px;padding:0 12px;border-radius:12px}
 .pick-op:hover{background:var(--hundido)}
 .pick-crear{color:var(--acento-txt);font-weight:600}
+.item-video{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.video-link{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:var(--hundido);color:var(--acento-txt);font-weight:700;font-size:.9rem;text-decoration:none;min-height:38px}
 .link-caja{background:var(--hundido);border-radius:12px;padding:12px;word-break:break-all;font-size:.92rem;margin:10px 0 4px;user-select:all}
 a.btn{text-decoration:none}
 </style>
@@ -422,7 +424,7 @@ async function cargar() {
 /* ===== Vistas ===== */
 function vLogin() {
   return `
-    <h1>Panel de profe</h1>
+    <h1>Panel de la profe</h1>
     <p class="suave" style="margin:10px 0 18px">Ingresá tu código de profe.</p>
     ${vista.error ? `<p style="color:var(--alerta);margin-bottom:10px">${esc(vista.error)}</p>` : ''}
     <input class="campo" id="codigo-in" autocomplete="off" autocapitalize="none" placeholder="Código de profe">
@@ -634,6 +636,9 @@ function vItemEd(it, di, bi, ii, total) {
       <button class="icono" data-a="moverItem" ${ref} data-v="1" aria-label="Bajar" ${ii === total - 1 ? 'disabled' : ''}>↓</button>
       <button class="icono" data-a="delItem" ${ref} aria-label="Quitar">✕</button>
     </div>
+    ${ej ? `<div class="item-video">${ej.video_url
+      ? `<a class="video-link" href="${esc(ej.video_url)}" target="_blank" rel="noopener">▶ Ver video</a><button class="btn-t chico" style="width:auto" data-a="editarVideo" data-id="${esc(ej.ejercicio_id)}">Cambiar</button>`
+      : `<button class="btn-t chico" style="width:auto" data-a="editarVideo" data-id="${esc(ej.ejercicio_id)}">+ Agregar video de cómo se hace</button>`}</div>` : ''}
     <div class="item-campos">
       <label class="lbl">Cantidad<span class="par">
         <input class="campo-c" data-c="reps" ${ref} inputmode="decimal" value="${esc(fmtNum(it.reps))}">
@@ -721,6 +726,27 @@ function pintarMas(a) {
     <button class="btn btn-s" data-a="activar" data-id="${esc(a.usuario_id)}" data-v="${a.activo ? '0' : '1'}">${a.activo ? 'Desactivar alumno' : 'Reactivar alumno'}</button>
     ${a.activo ? '<p class="suave chico" style="margin-top:6px">Desactivarlo bloquea su link, pero no borra nada de su historial.</p>' : ''}
     <button class="btn btn-t" data-a="cerrarCapa">Cerrar</button></div>`;
+}
+
+function pintarVideo(ej) {
+  $('#capa').innerHTML = `<div class="hoja" role="dialog" aria-label="Video de ${esc(ej.nombre)}">
+    <h3>Video: ${esc(ej.nombre)}</h3>
+    <p class="suave chico">Pegá el link de YouTube, Instagram o Drive. Lo ven todos los alumnos que tengan este ejercicio, con un botón a la vista en su rutina.</p>
+    <input class="campo" id="video-url" value="${esc(ej.video_url || '')}" placeholder="https://…" autocomplete="off" inputmode="url">
+    <button class="btn btn-p" data-a="guardarVideo" data-id="${esc(ej.ejercicio_id)}">Guardar</button>
+    ${ej.video_url ? `<button class="btn btn-s" data-a="quitarVideo" data-id="${esc(ej.ejercicio_id)}">Quitar video</button>` : ''}
+    <button class="btn btn-t" data-a="cerrarCapa">Cancelar</button></div>`;
+  setTimeout(() => { const i = $('#video-url'); if (i) i.focus(); }, 50);
+}
+async function guardarVideo(id, url) {
+  if (url && !/^https?:\/\//i.test(url)) { aviso('El link tiene que empezar con https://'); return; }
+  if (ocupado) return; ocupado = true;
+  try {
+    const res = await apiPost({ action: 'actualizarEjercicio', ejercicio_id: id, video_url: url });
+    if (!res.ok) throw new Error(res.error);
+    ejercicio(id).video_url = url;
+    cerrarCapa(); render(); aviso(url ? 'Video guardado' : 'Video quitado');
+  } catch (e) { aviso('No se pudo guardar el video'); } finally { ocupado = false; }
 }
 
 /* ===== Guardar rutina ===== */
@@ -881,6 +907,9 @@ const A = {
     } catch (e) { aviso('Sin conexión'); } finally { ocupado = false; }
   },
   guardar(d) { guardar(d.modo); },
+  editarVideo(d) { pintarVideo(ejercicio(d.id)); },
+  guardarVideo(d) { guardarVideo(d.id, ($('#video-url').value || '').trim()); },
+  quitarVideo(d) { guardarVideo(d.id, ''); },
   cerrarCapa() { cerrarCapa(); }
 };
 
