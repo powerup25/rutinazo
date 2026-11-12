@@ -320,6 +320,18 @@ select.campo,select.campo-c{color:inherit;font:inherit}
 .pick-crear{color:var(--acento-txt);font-weight:600}
 .item-video{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
 .video-link{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:var(--hundido);color:var(--acento-txt);font-weight:700;font-size:.9rem;text-decoration:none;min-height:38px}
+.item-extras{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.chip-ed{min-height:36px;padding:0 12px;border-radius:999px;border:1.5px solid var(--linea);background:var(--fondo);font-size:.86rem;font-weight:600;color:var(--suave)}
+.chip-ed.activo{border-color:var(--accion);color:var(--acento-txt)}
+.nota-ed{min-height:64px;margin-top:8px;font-size:.92rem}
+.prog-ed{background:var(--hundido);border-radius:14px;padding:12px;margin-top:8px}
+.prog-tit{font-size:.8rem;font-weight:700;color:var(--suave);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.prog-ed .seg{background:var(--fondo)}
+.prog-ed .chips button{min-height:36px;font-size:.84rem;background:var(--superficie)}
+.plan-tabla{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px 8px;align-items:center}
+.plan-tabla .campo-c{background:var(--superficie)}
+.prog-sesion{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.9rem}
+.campo-c.corto{width:64px;flex:0 0 64px;background:var(--superficie);text-align:center}
 .link-caja{background:var(--hundido);border-radius:12px;padding:12px;word-break:break-all;font-size:.92rem;margin:10px 0 4px;user-select:all}
 a.btn{text-decoration:none}
 </style>
@@ -514,19 +526,34 @@ function vNuevoAlumno() {
 
 function botonesCompartir(a) {
   const link = linkAlumno(a);
-  const msg = `Hola ${a.nombre}! Te paso tu nueva rutina: ${link}\nAbrí el link desde el celu y agregalo a tu pantalla de inicio para tenerlo a mano.`;
+  const msg = `¡Hola ${a.nombre}! Esta es tu rutina en Rutinazo: ${link}\nAbrilo desde el celu y agregalo a la pantalla de inicio para tenerlo a mano.`;
   return `<button class="btn btn-s" style="margin-top:10px" data-a="copiar" data-txt="${esc(link)}">Copiar link</button>
     <a class="btn btn-s" style="margin-top:10px" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Enviar por WhatsApp</a>
     ${navigator.share ? `<button class="btn btn-s" style="margin-top:10px" data-a="compartirNativo" data-id="${esc(a.usuario_id)}">Compartir…</button>` : ''}`;
 }
 
 /* ===== Editor de rutina ===== */
-function itemVacio() { return { ejercicio_id: '', reps: 12, unidad: 'reps', por_lado: false, peso: '', peso_modo: 'total', nota: '' }; }
+function itemVacio() { return { ejercicio_id: '', reps: 12, unidad: 'reps', por_lado: false, peso: '', peso_modo: 'total', nota: '', vueltas_plan: null, prog_peso: '', prog_reps: '', prog_cada: '' }; }
 function bloqueVacio(prev) { return { tipo: prev ? prev.tipo : 'circuito', vueltas: prev ? prev.vueltas : 3, descanso_seg: prev ? prev.descanso_seg : 60, items: [itemVacio()] }; }
 function diaVacio(prev) {
   const ult = prev && prev.bloques.length ? prev.bloques[prev.bloques.length - 1] : null;
   return { bloques: [bloqueVacio(ult)] };
 }
+function leerPlan(v) {
+  if (!v) return null;
+  try { const a = typeof v === 'string' ? JSON.parse(v) : v; return Array.isArray(a) && a.length ? a : null; } catch (e) { return null; }
+}
+// La tabla por vuelta siempre con tantas filas como vueltas tenga el bloque
+function planDe(it, n) {
+  if (!it.vueltas_plan) return null;
+  const p = it.vueltas_plan.slice(0, n);
+  while (p.length < n) p.push(Object.assign({}, p[p.length - 1] || { reps: num(it.reps), peso: num(it.peso) }));
+  it.vueltas_plan = p;
+  return p;
+}
+function pasoPeso(it) { return it.peso_modo === 'c/u' ? 1 : 2.5; }
+function tieneProg(it) { return !!it.vueltas_plan || num(it.prog_peso) || num(it.prog_reps); }
+
 function armarDias(bloques, detalle) {
   const nd = [...new Set(detalle.map(d => Number(d.dia)))].sort((a, b) => a - b);
   return nd.map(di => {
@@ -536,7 +563,9 @@ function armarDias(bloques, detalle) {
       const items = detalle.filter(d => Number(d.dia) === di && Number(d.bloque) === bn)
         .sort((a, b) => Number(a.orden) - Number(b.orden))
         .map(d => ({ ejercicio_id: String(d.ejercicio_id), reps: d.reps, unidad: d.unidad === 'seg' ? 'seg' : 'reps', por_lado: verdadero(d.por_lado),
-          peso: d.peso === '' || d.peso == null ? '' : d.peso, peso_modo: d.peso_modo === 'c/u' ? 'c/u' : 'total', nota: d.nota || '' }));
+          peso: d.peso === '' || d.peso == null ? '' : d.peso, peso_modo: d.peso_modo === 'c/u' ? 'c/u' : 'total', nota: d.nota || '',
+          vueltas_plan: leerPlan(d.vueltas_plan), prog_peso: d.prog_peso === '' ? '' : (d.prog_peso ?? ''),
+          prog_reps: d.prog_reps === '' ? '' : (d.prog_reps ?? ''), prog_cada: d.prog_cada === '' ? '' : (d.prog_cada ?? '') }));
       return { tipo: String(meta.tipo || 'circuito').toLowerCase() === 'series' ? 'series' : 'circuito',
         vueltas: Number(meta.vueltas) || 3, descanso_seg: Number(meta.descanso_seg) || 60, items };
     }) };
@@ -605,7 +634,11 @@ function vBloqueEd(b, di, bi, total) {
   const esCirc = b.tipo === 'circuito';
   return `<div class="bloque" data-d="${di}" data-b="${bi}">
     <div class="bloque-cab">
-      <b>${esCirc ? 'Circuito' : 'Bloque'} ${bi + 1}</b>
+      <span style="display:flex;align-items:center;gap:2px">
+        <b>${esCirc ? 'Circuito' : 'Bloque'} ${bi + 1}</b>
+        <button class="icono" data-a="moverBloque" data-d="${di}" data-b="${bi}" data-v="-1" aria-label="Subir bloque" ${bi === 0 ? 'disabled' : ''}>↑</button>
+        <button class="icono" data-a="moverBloque" data-d="${di}" data-b="${bi}" data-v="1" aria-label="Bajar bloque" ${bi === total - 1 ? 'disabled' : ''}>↓</button>
+      </span>
       <div class="fila" style="flex:0 0 auto;gap:4px">
         <div class="seg" role="group" aria-label="Tipo de bloque">
           <button data-a="tipoBloque" data-d="${di}" data-b="${bi}" data-t="circuito" aria-pressed="${esCirc}">Circuito</button>
@@ -621,12 +654,12 @@ function vBloqueEd(b, di, bi, total) {
       <div class="lbl">Descanso
         <div class="mini-paso"><button data-a="pasoBloque" data-d="${di}" data-b="${bi}" data-c="descanso_seg" data-v="-15" aria-label="Menos">−</button><span>${b.descanso_seg}s</span><button data-a="pasoBloque" data-d="${di}" data-b="${bi}" data-c="descanso_seg" data-v="15" aria-label="Más">+</button></div></div>
     </div>
-    ${b.items.map((it, ii) => vItemEd(it, di, bi, ii, b.items.length)).join('')}
+    ${b.items.map((it, ii) => vItemEd(it, di, bi, ii, b.items.length, b.vueltas)).join('')}
     <button class="mas-btn" data-a="addItem" data-d="${di}" data-b="${bi}">+ Ejercicio</button>
   </div>`;
 }
 
-function vItemEd(it, di, bi, ii, total) {
+function vItemEd(it, di, bi, ii, total, nVueltas) {
   const ej = it.ejercicio_id ? ejercicio(it.ejercicio_id) : null;
   const ref = `data-d="${di}" data-b="${bi}" data-i="${ii}"`;
   return `<div class="item" ${ref}>
@@ -650,6 +683,42 @@ function vItemEd(it, di, bi, ii, total) {
       </span></label>
     </div>
     <label class="check"><input type="checkbox" data-c="por_lado" ${ref} ${it.por_lado ? 'checked' : ''}> <span>Por lado (ej.: 8/8)</span></label>
+    <div class="item-extras">
+      <button class="chip-ed ${it.nota ? 'activo' : ''}" data-a="toggleNota" ${ref} aria-expanded="${!!(it._verNota || it.nota)}">📝 Nota${it.nota ? ' ✓' : ''}</button>
+      <button class="chip-ed ${tieneProg(it) ? 'activo' : ''}" data-a="toggleProg" ${ref} aria-expanded="${!!(it._verProg || tieneProg(it))}">📈 Progresión${tieneProg(it) ? ' ✓' : ''}</button>
+    </div>
+    ${it._verNota || it.nota ? `<textarea class="campo nota-ed" data-c="nota" ${ref} placeholder="Ej.: espalda pegada al respaldo, bajá lento en 3 segundos">${esc(it.nota)}</textarea>` : ''}
+    ${it._verProg || tieneProg(it) ? vProgEd(it, ref, nVueltas) : ''}
+  </div>`;
+}
+
+function vProgEd(it, ref, n) {
+  const plan = planDe(it, n);
+  const u = it.unidad === 'seg' ? 'seg' : 'reps';
+  return `<div class="prog-ed">
+    <p class="prog-tit">En la misma sesión</p>
+    <div class="seg" role="group" aria-label="Valores por vuelta">
+      <button data-a="planModo" ${ref} data-m="igual" aria-pressed="${!plan}">Igual en todas</button>
+      <button data-a="planModo" ${ref} data-m="variar" aria-pressed="${!!plan}">Distinto por vuelta</button>
+    </div>
+    ${plan ? `
+      <div class="chips" style="margin:10px 0 6px">
+        <button data-a="planPreset" ${ref} data-m="piramide">Bajar ${u}, subir peso</button>
+        <button data-a="planPreset" ${ref} data-m="dosuno">2 iguales + la última más pesada</button>
+      </div>
+      <div class="plan-tabla">
+        <span></span><span class="suave chico">${u === 'seg' ? 'Segundos' : 'Reps'}</span><span class="suave chico">Peso (${it.peso_modo === 'c/u' ? 'kg c/u' : 'kg'})</span>
+        ${plan.map((f, k) => `<span class="chico">Vuelta ${k + 1}</span>
+          <input class="campo-c" data-c="plan_reps" data-v="${k}" ${ref} inputmode="decimal" value="${esc(fmtNum(f.reps))}">
+          <input class="campo-c" data-c="plan_peso" data-v="${k}" ${ref} inputmode="decimal" placeholder="—" value="${esc(fmtNum(f.peso))}">`).join('')}
+      </div>` : ''}
+    <p class="prog-tit" style="margin-top:14px">Entre sesiones</p>
+    <div class="prog-sesion">
+      <span>Cada</span><input class="campo-c corto" data-c="prog_cada" ${ref} inputmode="numeric" placeholder="1" value="${esc(fmtNum(it.prog_cada))}"><span>sesión(es), sumar</span>
+      <input class="campo-c corto" data-c="prog_peso" ${ref} inputmode="decimal" placeholder="0" value="${esc(fmtNum(it.prog_peso))}"><span>kg y</span>
+      <input class="campo-c corto" data-c="prog_reps" ${ref} inputmode="decimal" placeholder="0" value="${esc(fmtNum(it.prog_reps))}"><span>${u}</span>
+    </div>
+    <p class="suave chico" style="margin-top:6px">Para bajar repeticiones usá un número negativo (ej.: −1).</p>
   </div>`;
 }
 
@@ -781,8 +850,16 @@ async function guardar(modo) {
     usuario_id: ed.usuario_id, nombre: ed.nombre.trim() || 'Rutina', notas: ed.notas,
     dias: ed.dias.map(d => ({ bloques: d.bloques.map(b => ({
       tipo: b.tipo, vueltas: b.vueltas, descanso_seg: b.descanso_seg,
-      items: b.items.map(it => ({ ejercicio_id: it.ejercicio_id, reps: num(it.reps), unidad: it.unidad, por_lado: !!it.por_lado,
-        peso: num(it.peso) == null ? '' : num(it.peso), peso_modo: it.peso_modo, nota: it.nota || '' }))
+      items: b.items.map(it => {
+        const plan = planDe(it, b.vueltas);
+        const p0 = plan ? plan[0] : null;
+        return { ejercicio_id: it.ejercicio_id, unidad: it.unidad, por_lado: !!it.por_lado, peso_modo: it.peso_modo,
+          reps: p0 && num(p0.reps) != null ? num(p0.reps) : num(it.reps),
+          peso: p0 ? (num(p0.peso) == null ? '' : num(p0.peso)) : (num(it.peso) == null ? '' : num(it.peso)),
+          nota: (it.nota || '').trim(),
+          vueltas_plan: plan ? plan.map(f => ({ reps: num(f.reps), peso: num(f.peso) })) : null,
+          prog_peso: num(it.prog_peso) || '', prog_reps: num(it.prog_reps) || '', prog_cada: num(it.prog_peso) || num(it.prog_reps) ? (num(it.prog_cada) || 1) : '' };
+      })
     })) }))
   };
   ocupado = true; aviso('Guardando…');
@@ -870,6 +947,30 @@ const A = {
     if (b.items.some(i => i.ejercicio_id) && !confirm('¿Borrar este bloque con sus ejercicios?')) return;
     ed.dias[+d.d].bloques.splice(+d.b, 1); render();
   },
+  moverBloque(d) {
+    const bs = ed.dias[+d.d].bloques, i = +d.b, j = i + +d.v;
+    if (j < 0 || j >= bs.length) return;
+    [bs[i], bs[j]] = [bs[j], bs[i]]; render();
+  },
+  toggleNota(d) { const it = itemRef(d); if (it.nota) return; it._verNota = !it._verNota; render(); if (it._verNota) setTimeout(() => { const t = document.querySelector(`.nota-ed[data-d="${d.d}"][data-b="${d.b}"][data-i="${d.i}"]`); if (t) t.focus(); }, 30); },
+  toggleProg(d) { const it = itemRef(d); if (tieneProg(it)) return; it._verProg = !it._verProg; render(); },
+  planModo(d) {
+    const it = itemRef(d), n = ed.dias[+d.d].bloques[+d.b].vueltas;
+    if (d.m === 'igual') it.vueltas_plan = null;
+    else if (!it.vueltas_plan) it.vueltas_plan = Array.from({ length: n }, () => ({ reps: num(it.reps), peso: num(it.peso) }));
+    it._verProg = true; render();
+  },
+  planPreset(d) {
+    const it = itemRef(d), n = ed.dias[+d.d].bloques[+d.b].vueltas;
+    const r0 = num(it.vueltas_plan && it.vueltas_plan[0] ? it.vueltas_plan[0].reps : it.reps) || 12;
+    const p0 = num(it.vueltas_plan && it.vueltas_plan[0] ? it.vueltas_plan[0].peso : it.peso);
+    const paso = pasoPeso(it), bajaReps = it.unidad === 'seg' ? 10 : 2;
+    it.vueltas_plan = Array.from({ length: n }, (_, k) => {
+      const sube = d.m === 'piramide' ? k : (k === n - 1 && n > 1 ? 1 : 0);
+      return { reps: Math.max(1, r0 - bajaReps * sube), peso: p0 == null ? null : Math.round((p0 + paso * sube) * 100) / 100 };
+    });
+    render();
+  },
   tipoBloque(d) { ed.dias[+d.d].bloques[+d.b].tipo = d.t; render(); },
   pasoBloque(d) {
     const b = ed.dias[+d.d].bloques[+d.b];
@@ -929,7 +1030,10 @@ document.addEventListener('input', e => {
   else if (t.id === 'ed-notas') ed.notas = t.value;
   else if (t.dataset.c && t.dataset.i != null) {
     const it = itemRef(t.dataset);
-    if (t.type === 'checkbox') it[t.dataset.c] = t.checked;
+    if (t.dataset.c === 'plan_reps' || t.dataset.c === 'plan_peso') {
+      const f = it.vueltas_plan[+t.dataset.v];
+      f[t.dataset.c === 'plan_reps' ? 'reps' : 'peso'] = num(t.value);
+    } else if (t.type === 'checkbox') it[t.dataset.c] = t.checked;
     else it[t.dataset.c] = t.value;
   }
 });
@@ -938,9 +1042,10 @@ document.addEventListener('change', e => {
   if (t.id === 'ver-inactivos') { vista.inactivos = t.checked; render(); return; }
   if (!ed) return;
   if (t.id === 'ed-alumno') { ed.usuario_id = t.value; render(); return; }
-  if (t.dataset.c && t.dataset.i != null) {
+  if (t.dataset.c && t.dataset.i != null && !/^plan_/.test(t.dataset.c)) {
     const it = itemRef(t.dataset);
     it[t.dataset.c] = t.type === 'checkbox' ? t.checked : t.value;
+    if (t.dataset.c === 'peso_modo' || t.dataset.c === 'unidad') render();
   }
 });
 document.addEventListener('keydown', e => {
