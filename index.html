@@ -229,7 +229,13 @@ button{cursor:pointer;border:0;background:none;padding:0}
 .descanso .t-lbl{font-size:1.15rem;font-weight:600}
 .descanso .t-sub{color:var(--suave);margin-top:4px}
 
-/* Video y pendientes */
+/* Video, notas y pendientes */
+.ej-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ej-links .video-link{margin-top:0}
+button.video-link{border:0;cursor:pointer;font:inherit;font-weight:700;font-size:.92rem}
+.nota-txt{background:var(--hundido);border-radius:var(--radio-c);padding:14px;margin:10px 0 4px;line-height:1.5}
+.prog-txt{color:var(--acento-txt);font-weight:600}
+.circ-op{flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px 16px;min-height:64px}
 .video-link{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:7px 14px;border-radius:999px;background:var(--hundido);color:var(--acento-txt);font-weight:700;font-size:.92rem;text-decoration:none;min-height:38px}
 .video-mini{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--hundido);color:var(--acento-txt);font-size:.7rem;text-decoration:none;vertical-align:middle;margin-left:4px}
 .aviso-pend{background:var(--descanso-suave);border-radius:var(--radio-c);padding:8px 14px;margin:0 0 14px}
@@ -319,7 +325,8 @@ function ahora() { return new Date().toISOString(); }
 function aviso(t) { const a = $('#aviso'); a.textContent = t; a.classList.add('ver'); clearTimeout(aviso._t); aviso._t = setTimeout(() => a.classList.remove('ver'), 2600); }
 
 function nombreEj(id) { return (D.ejercicios[id] || {}).nombre || id; }
-function tienePeso(item, valor) { return num(item.peso) != null || valor != null; }
+function tienePeso(item, valor) { return num(item.peso) != null || valor != null || !!(S && S.conPeso && S.conPeso[item.ejercicio_id]); }
+function modoPeso(item) { return item.peso_modo || (S && S.conPeso && S.conPeso[item.ejercicio_id]) || 'total'; }
 function fmtPeso(p, modo) { return p == null ? '' : `${fmtNum(p)} kg${modo === 'c/u' ? ' c/u' : ''}`; }
 function unidadReps(item) { return item.unidad === 'seg' ? 's' : (verdadero(item.por_lado) ? 'c/lado' : 'reps'); }
 function fmtReps(r, item) { if (r == null) return ''; return item.unidad === 'seg' ? `${fmtNum(r)} s` : `${fmtNum(r)}${verdadero(item.por_lado) ? ' c/lado' : ''}`; }
@@ -393,6 +400,49 @@ function fmtVueltas(filas, item) {
 }
 function textoUltima(u, item) { return fmtVueltas(u.filas, item); }
 function esProgresiva(u) { return u && new Set(u.filas.map(f => `${num(f.peso)}|${num(f.reps)}`)).size > 1; }
+function planDe(item) {
+  if (item._plan !== undefined) return item._plan;
+  let p = null;
+  try { const v = item.vueltas_plan; const a = typeof v === 'string' && v ? JSON.parse(v) : v; if (Array.isArray(a) && a.length) p = a; } catch (e) {}
+  item._plan = p;
+  return p;
+}
+function tienePlan(item) { return !!planDe(item) || !!num(item.prog_peso) || !!num(item.prog_reps); }
+// Sesiones de esta rutina en las que hiciste el ejercicio (sin contar la de hoy)
+function sesionesConEj(ej) {
+  const ids = new Set();
+  D.registros.forEach(r => {
+    if (String(r.ejercicio_id) === String(ej) && r.estado === 'hecho' && D.rutina && r.rutina_id === D.rutina.rutina_id && (!S || r.sesion_id !== S.sesion_id)) ids.add(r.sesion_id);
+  });
+  return ids.size;
+}
+// Lo que la profe planeó para esa vuelta, con la progresión entre sesiones ya aplicada
+function objetivo(item, v) {
+  const plan = planDe(item);
+  const f = plan ? (plan[v - 1] || plan[plan.length - 1]) : { reps: item.reps, peso: item.peso };
+  let peso = num(f.peso), reps = num(f.reps);
+  const pp = num(item.prog_peso) || 0, pr = num(item.prog_reps) || 0;
+  if (pp || pr) {
+    const saltos = Math.floor(sesionesConEj(item.ejercicio_id) / (num(item.prog_cada) || 1));
+    if (pp && peso != null) peso = Math.round((peso + pp * saltos) * 100) / 100;
+    if (pr && reps != null) reps = Math.max(1, reps + pr * saltos);
+  }
+  return { peso, reps };
+}
+function textoProgresion(item) {
+  const pp = num(item.prog_peso) || 0, pr = num(item.prog_reps) || 0, cada = num(item.prog_cada) || 1;
+  if (!pp && !pr) return '';
+  const partes = [];
+  if (pp) partes.push(`${pp > 0 ? 'sube' : 'baja'} ${fmtNum(Math.abs(pp))} kg`);
+  if (pr) partes.push(`${pr > 0 ? 'suma' : 'resta'} ${fmtNum(Math.abs(pr))} ${item.unidad === 'seg' ? 's' : 'reps'}`);
+  return partes.join(' y ') + (cada === 1 ? ' cada sesión' : ` cada ${cada} sesiones`);
+}
+function textoObjetivo(item) {
+  const plan = planDe(item);
+  if (!plan) { const o = objetivo(item, 1); return fmtSerie(o.peso, o.reps, item); }
+  return fmtVueltas(plan.map((_, k) => objetivo(item, k + 1)), item);
+}
+
 function diaSugerido() {
   const ds = dias();
   const hechas = sesionesHechas().filter(s => !D.rutina || s.rutina_id === D.rutina.rutina_id);
@@ -468,7 +518,19 @@ function borrador(item) {
     if (m && m.estado !== 'salteado') { hoyPrev = m; pvNum = pv; }
   }
   const antesV = filaAntes(S.vuelta), antesPrev = pvNum ? filaAntes(pvNum) : null;
-  if (hoyPrev && antesV && antesPrev) {
+  if (!S.reemplazos[ej] && tienePlan(item)) {
+    // Hay un plan de la profe: se arranca de lo planeado para esta vuelta.
+    const obj = objetivo(item, S.vuelta);
+    base = { peso: obj.peso, reps: obj.reps };
+    if (hoyPrev) {
+      // si hoy cambiaste el peso respecto de lo planeado, el cambio se mantiene
+      const objPrev = objetivo(item, pvNum);
+      if (hoyPrev.peso != null && objPrev.peso != null && obj.peso != null) base.peso = Math.round((obj.peso + (hoyPrev.peso - objPrev.peso)) * 100) / 100;
+      else if (hoyPrev.peso != null && obj.peso == null) base.peso = hoyPrev.peso;
+    } else if (antesV && num(antesV.peso) != null && (obj.peso == null || num(antesV.peso) > obj.peso)) {
+      base.peso = num(antesV.peso);   // si ya venías por encima del plan, no te baja
+    }
+  } else if (hoyPrev && antesV && antesPrev) {
     // Sigue la progresión de la vez anterior, pero con el cambio que hiciste hoy.
     // Ej.: la vez anterior 55 → 57,5 → 60. Hoy en la vuelta 1 hiciste 57,5 → te propone 60 y después 62,5.
     // Si la vez anterior fue pareja (55, 55, 55) y hoy subiste a 57,5 → sigue en 57,5.
@@ -495,7 +557,8 @@ function empezar(dia) {
     rutina_id: D.rutina.rutina_id, dia, inicio: ahora(),
     bi: 0, vuelta: 1, fase: 'entreno',
     marcas: {}, borr: {}, omitir: {}, reemplazos: {}, esf: {}, enviados: [], descansoHasta: null,
-    descartados: {}, recup: null
+    descartados: {}, recup: null,
+    cola: bloquesDe(dia).map((_, i) => i), vueltaDe: {}
   };
   guardarS(); pedirWakeLock();
   vista = { p: 'entreno' }; render(); window.scrollTo(0, 0);
@@ -520,7 +583,8 @@ function borradorRec(item) {
   const v = r.vueltas[0];
   let base = null;
   const u = ultimaVez(item.ejercicio_id, S.sesion_id);
-  if (u) { const f = u.filas.find(x => Number(x.vuelta) === v) || u.filas[u.filas.length - 1]; base = { peso: num(f.peso), reps: num(f.reps) }; }
+  if (tienePlan(item)) base = objetivo(item, v);
+  else if (u) { const f = u.filas.find(x => Number(x.vuelta) === v) || u.filas[u.filas.length - 1]; base = { peso: num(f.peso), reps: num(f.reps) }; }
   if (!base) {
     for (const k of Object.keys(S.marcas)) {
       const m = S.marcas[k];
@@ -578,16 +642,51 @@ function registrosDeBloque(bi) {
 }
 function sesionPayload(estado) { return { sesion_id: S.sesion_id, rutina_id: S.rutina_id, dia: S.dia, inicio: S.inicio, fin: ahora(), estado }; }
 
+// Orden en el que vas haciendo los circuitos hoy (podés mandar uno al final de la cola)
+function asegurarCola() {
+  if (S.cola) return;
+  const n = bloquesSesion().length;
+  S.cola = [];
+  for (let i = S.bi; i < n; i++) if (!S.enviados.includes(i)) S.cola.push(i);
+  S.vueltaDe = {};
+}
+function esUltimoCircuito() { asegurarCola(); return S.cola.length <= 1; }
+
 function cerrarBloque() {
-  const total = bloquesSesion().length;
-  const ultimo = S.bi >= total - 1;
+  asegurarCola();
+  const ultimo = S.cola.length <= 1;
   const regs = registrosDeBloque(S.bi);
   S.enviados.push(S.bi);
   encolar({ sesion: sesionPayload(ultimo ? 'completa' : 'en_curso'), registros: regs });
   if (ultimo) return finalizar('completa', true);
-  S.bi++; S.vuelta = 1; S.fase = 'entreno'; S.descansoHasta = null;
+  S.cola.shift();
+  S.bi = S.cola[0]; S.vuelta = S.vueltaDe[S.bi] || 1; S.fase = 'entreno'; S.descansoHasta = null;
   autoOmitidos();
   guardarS(); render(); window.scrollTo(0, 0);
+}
+
+function cambiarCircuito(destino) {
+  asegurarCola();
+  S.vueltaDe[S.bi] = S.vuelta;
+  const anterior = S.bi;
+  S.cola = [destino].concat(S.cola.filter(i => i !== destino && i !== anterior), [anterior]);
+  S.bi = destino; S.vuelta = S.vueltaDe[destino] || 1;
+  autoOmitidos();
+  guardarS(); cerrarCapa(); render(); window.scrollTo(0, 0);
+  aviso(`El circuito ${anterior + 1} quedó para el final`);
+}
+function pintarCambiarCircuito() {
+  asegurarCola();
+  const bls = bloquesSesion();
+  const otros = S.cola.filter(i => i !== S.bi);
+  $('#capa').innerHTML = `<div class="hoja" role="dialog" aria-label="Cambiar de circuito">
+    <h3>¿Qué circuito querés hacer ahora?</h3>
+    <p class="suave chico">El circuito ${S.bi + 1} pasa al final de la cola y lo retomás desde donde lo dejaste.</p>
+    ${otros.map(i => `<button class="btn btn-s circ-op" data-a="irCircuito" data-b="${i}">
+      <span><b>Circuito ${i + 1}</b>${S.vueltaDe[i] ? ` <span class="suave chico">(empezado, vuelta ${S.vueltaDe[i]})</span>` : ''}</span>
+      <span class="suave chico">${esc(bls[i].items.map(it => nombreEj(it.ejercicio_id)).join(', '))}</span>
+    </button>`).join('')}
+    <button class="btn btn-t" data-a="cerrarCapa">Cancelar</button></div>`;
 }
 
 function finalizar(estado, yaEnviado) {
@@ -858,7 +957,7 @@ function vInicio() {
         <h3>${b.tipo === 'series' ? nombreEj(b.items[0].ejercicio_id) : `Circuito ${i + 1}`}, ${b.vueltas} ${b.tipo === 'series' ? 'series' : 'vueltas'}</h3>
         <ul class="lista">${b.items.map(it => {
           const u = ultimaVez(it.ejercicio_id);
-          const txt = u ? textoUltima(u, it) : fmtSerie(num(it.peso), num(it.reps), it);
+          const txt = tienePlan(it) ? textoObjetivo(it) : (u ? textoUltima(u, it) : fmtSerie(num(it.peso), num(it.reps), it));
           const vid = (D.ejercicios[it.ejercicio_id] || {}).video_url;
           return `<li><span>${esc(nombreEj(it.ejercicio_id))}${vid ? ` <a class="video-mini" href="${esc(vid)}" target="_blank" rel="noopener" aria-label="Ver cómo se hace ${esc(nombreEj(it.ejercicio_id))}">▶</a>` : ''}</span><span class="obj">${esc(txt)}</span></li>`;
         }).join('')}</ul>
@@ -872,7 +971,9 @@ function vEntreno() {
   if (S.recup) return vRecuperar();
   if (S.fase === 'esfuerzo') return vEsfuerzo();
   const bls = bloquesSesion(), bl = bloqueActual();
-  const titulo = bl.tipo === 'series' ? `Ejercicio ${S.bi + 1} de ${bls.length}` : `Circuito ${S.bi + 1} de ${bls.length}`;
+  asegurarCola();
+  const hechos = S.enviados.length;
+  const titulo = bl.tipo === 'series' ? `Ejercicio ${S.bi + 1}` : `Circuito ${S.bi + 1}`;
   const discos = Array.from({ length: bl.vueltas }, (_, i) => {
     const v = i + 1;
     const cls = v < S.vuelta ? 'lleno' : v === S.vuelta ? 'ahora' : '';
@@ -885,7 +986,8 @@ function vEntreno() {
       <button class="btn-t" data-a="terminar">Terminar</button>
     </div>
     <div class="progreso">
-      <span class="cond">${titulo}</span>
+      <div><span class="cond">${titulo}</span>
+        <p class="suave chico" style="margin-top:2px">${hechos} de ${bls.length} hechos${S.cola.length > 1 ? ` · <button class="btn-t chico" style="min-height:32px;width:auto;display:inline" data-a="cambiarCircuito">Cambiar de circuito</button>` : ''}</p></div>
       <div><div class="discos" aria-hidden="true">${discos}</div>
         <p class="vuelta-txt">${bl.tipo === 'series' ? 'Serie' : 'Vuelta'} ${S.vuelta} de ${bl.vueltas}</p></div>
     </div>
@@ -895,7 +997,7 @@ function vEntreno() {
 
 // Mientras hacés otro circuito, recordatorio corto de lo que quedó pendiente de circuitos anteriores
 function vAvisoPendientes() {
-  const pend = pendientesSesion().filter(p => p.bi < S.bi);
+  const pend = pendientesSesion().filter(p => p.bi !== S.bi);
   if (!pend.length) return '';
   return `<div class="aviso-pend">${pend.map(p => `<div class="fila" style="gap:8px">
       <p class="chico" style="flex:1">Pendiente: <b>${esc(nombreEj(p.ej))}</b></p>
@@ -907,7 +1009,11 @@ function vTarjeta(item) {
   const ej = item.ejercicio_id, m = marca(ej), rep = S.reemplazos[ej];
   const u = ultimaVez(ej, S.sesion_id);
   const fv = u && esProgresiva(u) ? u.filas.find(f => Number(f.vuelta) === S.vuelta) : null;
-  const meta = `Objetivo <b>${esc(fmtSerie(num(item.peso), num(item.reps), item))}</b>` +
+  const plan = tienePlan(item), oV = objetivo(item, S.vuelta);
+  const objTxt = plan
+    ? `${planDe(item) ? `Objetivo vuelta ${S.vuelta}` : 'Objetivo'} <b>${esc(fmtSerie(oV.peso, oV.reps, item))}</b>${textoProgresion(item) ? `<br><span class="prog-txt">📈 ${esc(textoProgresion(item))}</span>` : ''}`
+    : `Objetivo <b>${esc(fmtSerie(num(item.peso), num(item.reps), item))}</b>`;
+  const meta = objTxt +
     (u && !rep ? `<br>Última vez (${fmtFecha(u.ts)}): <b>${esc(textoUltima(u, item))}</b>` : '') +
     (fv && !rep ? `<br>En la vuelta ${S.vuelta}: <b>${esc(fmtSerie(num(fv.peso), num(fv.reps), item))}</b>` : '');
   const nombre = esc(nombreEj(ej));
@@ -929,10 +1035,10 @@ function vTarjeta(item) {
   return `<article class="ej">
     <div class="ej-cab"><h3>${nombre}</h3>
       <button class="mas" data-a="opciones" data-ej="${esc(ej)}" aria-label="Opciones de ${nombre}">⋯</button></div>
-    ${video ? `<a class="video-link" href="${esc(video)}" target="_blank" rel="noopener">▶ Ver cómo se hace</a>` : ''}
+    ${linksEj(item, !rep)}
     ${rep ? `<p class="reemp">En su lugar: ${esc(rep.nombre)}</p>` : `<p class="ej-meta">${meta}</p>`}
     <div class="pasos ${conPeso ? '' : 'uno'}">
-      ${conPeso ? paso(ej, 'peso', b.peso, item.peso_modo === 'c/u' ? 'kg c/u' : 'kg') : ''}
+      ${conPeso ? paso(ej, 'peso', b.peso, modoPeso(item) === 'c/u' ? 'kg c/u' : 'kg') : ''}
       ${paso(ej, 'reps', b.reps, unidadReps(item))}
     </div>
     ${item.unidad === 'seg' ? `<div class="acciones-ej">
@@ -941,6 +1047,22 @@ function vTarjeta(item) {
     : `<button class="btn hecho-btn" data-a="hecho" data-ej="${esc(ej)}">Hecho</button>`}
   </article>`;
 }
+function linksEj(item, conVideo) {
+  const video = conVideo && (D.ejercicios[item.ejercicio_id] || {}).video_url;
+  const nota = String(item.nota || '').trim();
+  if (!video && !nota) return '';
+  return `<div class="ej-links">
+    ${video ? `<a class="video-link" href="${esc(video)}" target="_blank" rel="noopener">▶ Ver cómo se hace</a>` : ''}
+    ${nota ? `<button class="video-link" data-a="verNota" data-ej="${esc(item.ejercicio_id)}">📝 Notas</button>` : ''}
+  </div>`;
+}
+function pintarNota(item) {
+  $('#capa').innerHTML = `<div class="hoja" role="dialog" aria-label="Notas de ${esc(nombreEj(item.ejercicio_id))}">
+    <h3>📝 ${esc(nombreEj(item.ejercicio_id))}</h3>
+    <p class="nota-txt">${esc(item.nota).replace(/\n/g, '<br>')}</p>
+    <button class="btn btn-p" data-a="cerrarCapa">Entendido</button></div>`;
+}
+
 function paso(ej, campo, valor, unidad) {
   const et = campo === 'peso' ? 'peso' : 'repeticiones';
   return `<div class="paso">
@@ -953,7 +1075,7 @@ function paso(ej, campo, valor, unidad) {
 function vPendientes() {
   const pend = pendientesSesion().filter(p => !(S.pospuestos && S.pospuestos[p.k] === S.bi));
   if (!pend.length) return '';
-  const ultimoBloque = S.bi >= bloquesSesion().length - 1;
+  const ultimoBloque = esUltimoCircuito();
   const txtVueltas = v => v.length === 1 ? `la vuelta ${v[0]}` : `las vueltas ${v.slice(0, -1).join(', ')} y ${v[v.length - 1]}`;
   return `<div class="recordatorio">
     <h3>Te quedó pendiente</h3>
@@ -979,11 +1101,11 @@ function vRecuperar() {
     <p class="suave">Recuperando ${r.vueltas.length > 1 ? `${r.vueltas.length} vueltas` : 'una vuelta'}</p>
     <article class="ej" style="margin-top:10px">
       <h3>${esc(nombreEj(r.ej))}</h3>
-      ${(D.ejercicios[r.ej] || {}).video_url ? `<a class="video-link" href="${esc(D.ejercicios[r.ej].video_url)}" target="_blank" rel="noopener">▶ Ver cómo se hace</a>` : ''}
-      <p class="ej-meta">Vuelta ${v}. Objetivo <b>${esc(fmtSerie(num(item.peso), num(item.reps), item))}</b>
+      ${linksEj(item, true)}
+      <p class="ej-meta">Vuelta ${v}. Objetivo <b>${esc(fmtSerie(objetivo(item, v).peso, objetivo(item, v).reps, item))}</b>
         ${fv ? `<br>La última vez en esta vuelta: <b>${esc(fmtSerie(num(fv.peso), num(fv.reps), item))}</b>` : ''}</p>
       <div class="pasos ${conPeso ? '' : 'uno'}">
-        ${conPeso ? paso(r.ej, 'peso', b.peso, item.peso_modo === 'c/u' ? 'kg c/u' : 'kg') : ''}
+        ${conPeso ? paso(r.ej, 'peso', b.peso, modoPeso(item) === 'c/u' ? 'kg c/u' : 'kg') : ''}
         ${paso(r.ej, 'reps', b.reps, unidadReps(item))}
       </div>
       ${item.unidad === 'seg' ? `<button class="btn timer-btn" style="margin-bottom:10px" data-a="timerEj" data-ej="${esc(r.ej)}">Iniciar ${fmtNum(b.reps)} s</button>` : ''}
@@ -1005,7 +1127,7 @@ function vEsfuerzo() {
       <div class="esf"><h3>${esc(S.reemplazos[it.ejercicio_id] ? S.reemplazos[it.ejercicio_id].nombre : nombreEj(it.ejercicio_id))}</h3>
         <div class="chips">${ESFUERZO.map(e => `<button data-a="esf" data-ej="${esc(it.ejercicio_id)}" data-v="${e.v}" aria-pressed="${elegidos[it.ejercicio_id] === e.v}">${e.t}</button>`).join('')}</div>
       </div>`).join('')}
-    <button class="btn btn-p" style="margin-top:14px" data-a="guardarBloque">${S.bi >= total - 1 ? 'Terminar entrenamiento' : 'Siguiente circuito'}</button>`;
+    <button class="btn btn-p" style="margin-top:14px" data-a="guardarBloque">${esUltimoCircuito() ? 'Terminar entrenamiento' : 'Siguiente circuito'}</button>`;
 }
 
 function vResumen() {
@@ -1112,9 +1234,16 @@ function pintarOpciones() {
   let cuerpo;
   if (!op.modo) {
     cuerpo = `
+      ${!rep && !tienePeso(itemDe(ej), draft(ej).peso) ? `<button class="btn btn-s" data-a="opModo" data-m="peso">Agregar peso</button>` : ''}
       <button class="btn btn-s" data-a="opModo" data-m="saltear">Saltear este ejercicio</button>
       ${rep ? `<button class="btn btn-s" data-a="opOriginal">Volver a ${nombre}</button>`
             : `<button class="btn btn-s" data-a="opModo" data-m="cambiar">Cambiarlo por otro</button>`}
+      <button class="btn btn-t" data-a="cerrarCapa">Cancelar</button>`;
+  } else if (op.modo === 'peso') {
+    cuerpo = `
+      <p class="suave chico">¿Cómo vas a usar el peso?</p>
+      <button class="btn btn-s" data-a="agregarPeso" data-m="total">En total (disco, barra o máquina)</button>
+      <button class="btn btn-s" data-a="agregarPeso" data-m="c/u">Uno en cada mano (mancuernas)</button>
       <button class="btn btn-t" data-a="cerrarCapa">Cancelar</button>`;
   } else {
     const esCambio = op.modo === 'cambiar';
@@ -1163,7 +1292,7 @@ const A = {
   paso(d) {
     const item = itemDe(d.ej), b = draft(d.ej), c = d.c;
     let p;
-    if (c === 'peso') p = item.peso_modo === 'c/u' ? 0.5 : 2.5;
+    if (c === 'peso') p = modoPeso(item) === 'c/u' ? 0.5 : 2.5;
     else p = item.unidad === 'seg' ? 5 : 1;
     const base = b[c] == null ? 0 : b[c];
     b[c] = Math.max(0, Math.round((base + p * Number(d.d)) * 100) / 100);
@@ -1175,8 +1304,9 @@ const A = {
   },
   hecho(d) {
     const item = itemDe(d.ej), b = borrador(item), rep = S.reemplazos[d.ej];
+    const peso = b.peso === 0 && num(item.peso) == null ? null : b.peso;
     S.marcas[clave(S.bi, S.vuelta, d.ej)] = {
-      estado: rep ? 'reemplazado' : 'hecho', peso: b.peso, reps: b.reps,
+      estado: rep ? 'reemplazado' : 'hecho', peso, reps: b.reps,
       reemplazo: rep ? rep.nombre : '', motivo: rep ? rep.motivo : '', ts: ahora()
     };
     revisar(); guardarS(); render();
@@ -1237,6 +1367,16 @@ const A = {
     guardarS(); render(); window.scrollTo(0, 0);
   },
   terminar() { pintarConfirmarFin(); },
+  verNota(d) { pintarNota(itemDe(d.ej)); },
+  agregarPeso(d) {
+    const ej = op.ej;
+    S.conPeso = S.conPeso || {}; S.conPeso[ej] = d.m;
+    const b = draft(ej); if (b.peso == null) b.peso = 0;
+    guardarS(); cerrarCapa(); render();
+    aviso('Listo: sumale el peso con el +');
+  },
+  cambiarCircuito() { pintarCambiarCircuito(); },
+  irCircuito(d) { cambiarCircuito(+d.b); },
   timerEj(d) { iniciarTimerEj(d.ej); },
   cancelarTimerEj() { terminarTimerEj(false, 0); },
   cortarTimerEj() {
